@@ -1,4 +1,4 @@
-import { and, desc, eq, lte } from "drizzle-orm";
+import { and, desc, eq, isNull, lte } from "drizzle-orm";
 import type { DbClient } from "../client";
 import {
 	monitoringProjects,
@@ -25,25 +25,33 @@ export function createProject(db: DbClient, data: NewMonitoringProject) {
 
 export function getProjectById(db: DbClient, id: string) {
 	return db.query.monitoringProjects.findFirst({
-		where: eq(monitoringProjects.id, id),
+		where: and(eq(monitoringProjects.id, id), isNull(monitoringProjects.deletedAt)),
 		with: { prompts: true, schedules: true },
 	});
 }
 
 /**
  * List every monitoring project in the system. Beacon runs single-tenant,
- * so every caller wants all projects.
+ * so every caller wants all projects. Soft-deleted projects are excluded.
  */
 export function listAllProjects(db: DbClient) {
 	return db.query.monitoringProjects.findMany({
+		where: isNull(monitoringProjects.deletedAt),
+		orderBy: desc(monitoringProjects.createdAt),
 		with: { prompts: true, schedules: true },
 	});
 }
 
-export function deleteProject(db: DbClient, id: string) {
+/**
+ * Soft-delete: marks the project deleted without dropping its history.
+ * Snapshots, mentions and the cascading FKs stay in place so the
+ * historical record survives. Hard delete is intentionally not exposed.
+ */
+export function softDeleteProject(db: DbClient, id: string) {
 	return db
-		.delete(monitoringProjects)
-		.where(eq(monitoringProjects.id, id))
+		.update(monitoringProjects)
+		.set({ deletedAt: new Date() })
+		.where(and(eq(monitoringProjects.id, id), isNull(monitoringProjects.deletedAt)))
 		.returning()
 		.then((rows) => rows[0]);
 }
