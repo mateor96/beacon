@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@beacon/ai": "workspace:*",
+		"@beacon/api-sdk": "workspace:*",
 		"@beacon/db": "workspace:*",
 		"@beacon/monitoring": "workspace:*",
 		"@beacon/notifications": "workspace:*",
@@ -22,10 +23,12 @@
 		"@beacon/shared": "workspace:*",
 		"@beacon/ui": "workspace:*",
 		"@scalar/api-reference-react": "^0.9.22",
+		"drizzle-orm": "^0.38.3",
 		"ioredis": "^5.10.0",
 		"next": "^15.1.6",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"zod": "^3.24.0"
 	},
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4.0.6",

@@ -29,3 +29,4 @@ export * as localeQueries from "./locales";
 export * as redditQueries from "./reddit";
 export * as csvExportQueries from "./csv-exports";
 export * as reportShareQueries from "./report-shares";
+export * as webhookQueries from "./webhooks";

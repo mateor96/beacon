@@ -24,6 +24,7 @@ export {
 	redditQueries,
 	csvExportQueries,
 	reportShareQueries,
+	webhookQueries,
 } from "./queries/index";
 export type { CleanupResult, HtmlPurgeResult } from "./queries/cleanup";
 export { mergeScanFixes, type MergeScanFixesResult } from "./rpc";

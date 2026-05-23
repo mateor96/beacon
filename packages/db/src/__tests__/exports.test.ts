@@ -39,6 +39,7 @@ describe("@beacon/db exports", () => {
 			"redditQueries",
 			"csvExportQueries",
 			"reportShareQueries",
+			"webhookQueries",
 		];
 
 		expect(Object.keys(queries).sort()).toEqual([...EXPECTED_NAMESPACES].sort());
