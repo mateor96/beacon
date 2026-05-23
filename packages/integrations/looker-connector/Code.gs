@@ -25,8 +25,11 @@ function getAuthType() {
 }
 
 function setCredentials(request) {
+  // BEACON_API_TOKEN is operator-generated (openssl rand -hex 32). We
+  // accept any non-empty token >= 32 chars; the backend timing-safe
+  // compares against the env value.
   var token = (request.key || "").trim();
-  if (token.length < 16 || token.indexOf("beacon_") !== 0) {
+  if (token.length < 32) {
     return { errorCode: "INVALID_CREDENTIALS" };
   }
   PropertiesService.getUserProperties().setProperty("dscc.key", token);
@@ -39,7 +42,7 @@ function resetAuth() {
 
 function isAuthValid() {
   var token = PropertiesService.getUserProperties().getProperty("dscc.key");
-  return !!token && token.indexOf("beacon_") === 0;
+  return !!token && token.length >= 32;
 }
 
 function isAdminUser() {
