@@ -26,7 +26,6 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { Database } from "../client.js";
-import { deleteUserAccount } from "../queries/deletion.js";
 import {
 	createCmsConnection,
 	createDeploymentAttempt,
@@ -435,61 +434,8 @@ describe.skipIf(!DATABASE_URL)("fix generation schema (real Postgres)", () => {
 		expect((row.rollbackData as { cms: string }).cms).toBe("wordpress");
 	});
 
-	// ── DSGVO deletion sweeper regression (P1.1) ────────────────────────
-
-	it("deleteUserAccount survives the RESTRICT chain when fixes were deployed", async () => {
-		await seedUser();
-		const scanId = await seedScan();
-		const fix = await createGeneratedFix(db, {
-			scanId,
-			userId: USER_ID,
-			fixType: "llms_txt",
-			content: "# llms",
-			contentHash: "h1",
-		});
-		const conn = await createCmsConnection(db, {
-			userId: USER_ID,
-			cmsType: "wordpress",
-			siteUrl: "https://example.com",
-			credentials: SAMPLE_CREDS,
-		});
-		const deployment = await createDeploymentAttempt(db, {
-			fixId: fix.id,
-			cmsConnectionId: conn.id,
-		});
-		await recordValidation(db, {
-			deploymentId: deployment.id,
-			scanId: null,
-			status: "pass",
-			results: { checksRun: [], checksPassed: [], checksFailed: [] },
-		});
-
-		// Without §6.5 wiring, this would FK-violate via the RESTRICT on
-		// cms_connections → deployment_attempts. With it, the sweeper hard-
-		// deletes children in order before tx.delete(profiles).
-		const result = await deleteUserAccount(db, USER_ID);
-		expect(result.success).toBe(true);
-
-		const [{ count: profileCount }] = await sqlClient<{ count: bigint }[]>`
-			SELECT COUNT(*) AS count FROM profiles WHERE id = ${USER_ID}`;
-		expect(Number(profileCount)).toBe(0);
-
-		const counts = await Promise.all([
-			sqlClient<
-				{ count: bigint }[]
-			>`SELECT COUNT(*) AS count FROM generated_fixes WHERE user_id = ${USER_ID}`,
-			sqlClient<
-				{ count: bigint }[]
-			>`SELECT COUNT(*) AS count FROM cms_connections WHERE user_id = ${USER_ID}`,
-			sqlClient<
-				{ count: bigint }[]
-			>`SELECT COUNT(*) AS count FROM deployment_attempts WHERE fix_id = ${fix.id}`,
-			sqlClient<
-				{ count: bigint }[]
-			>`SELECT COUNT(*) AS count FROM fix_validations WHERE deployment_id = ${deployment.id}`,
-		]);
-		for (const [{ count }] of counts) {
-			expect(Number(count)).toBe(0);
-		}
-	});
+	// DSGVO deletion sweeper test removed — the `deleteUserAccount` helper
+	// and the per-user deletion chain were part of the auth layer that was
+	// archived during the OSS conversion. If a future PR re-enables auth,
+	// the sweeper + test should come back together.
 });
