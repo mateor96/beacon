@@ -1,0 +1,30 @@
+{
+	"name": "@beacon/scanner",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf dist",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage"
+	},
+	"dependencies": {
+		"@beacon/shared": "workspace:*",
+		"node-html-parser": "^6.1.13",
+		"undici": "^6"
+	},
+	"devDependencies": {
+		"@types/node": "^22.0.0",
+		"@vitest/coverage-v8": "^3.0.4",
+		"typescript": "^5.7.3",
+		"vitest": "^3.0.4"
+	}
+}

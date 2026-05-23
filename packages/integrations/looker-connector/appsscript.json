@@ -1,0 +1,19 @@
+{
+	"timeZone": "Europe/Berlin",
+	"exceptionLogging": "STACKDRIVER",
+	"runtimeVersion": "V8",
+	"dataStudio": {
+		"name": "Beacon",
+		"logoUrl": "https://beacon.example.com/logo-square.png",
+		"company": "Beacon",
+		"addonUrl": "https://beacon.example.com/integrations/looker",
+		"supportUrl": "https://beacon.example.com/support",
+		"description": "AI Readiness & Visibility data for Looker Studio dashboards.",
+		"sources": ["https://beacon.example.com"]
+	},
+	"oauthScopes": [
+		"https://www.googleapis.com/auth/script.external_request",
+		"https://www.googleapis.com/auth/script.scriptapp",
+		"https://www.googleapis.com/auth/script.storage"
+	]
+}

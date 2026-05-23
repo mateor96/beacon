@@ -1,0 +1,35 @@
+{
+	"name": "@beacon/ai",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf dist",
+		"test": "vitest run",
+		"db:seed-locales-pack": "tsx src/scripts/seed-locales-pack.ts"
+	},
+	"dependencies": {
+		"@anthropic-ai/sdk": "^0.39.0",
+		"@beacon/db": "workspace:*",
+		"@beacon/monitoring": "workspace:*",
+		"@beacon/scanner": "workspace:*",
+		"@beacon/shared": "workspace:*",
+		"@google/generative-ai": "^0.24.1",
+		"openai": "^6.33.0",
+		"zod": "^3.24.0"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.7",
+		"tsx": "^4.21.0",
+		"typescript": "^5.7.3",
+		"vitest": "^3.0.4"
+	}
+}

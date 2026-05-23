@@ -1,0 +1,2 @@
+DROP INDEX "idx_citation_page_mappings_citation";--> statement-breakpoint
+CREATE UNIQUE INDEX "idx_citation_page_mappings_unique" ON "citation_page_mappings" USING btree ("citation_id","cited_page_id","position");

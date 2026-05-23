@@ -1,0 +1,30 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "preserve",
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		],
+		"paths": {
+			"@/*": ["./src/*"],
+			"@beacon/shared": ["../../packages/shared/src/index.ts"],
+			"@beacon/shared/constants": ["../../packages/shared/src/constants.ts"],
+			"@beacon/shared/types": ["../../packages/shared/src/types.ts"],
+			"@beacon/shared/validation": ["../../packages/shared/src/validation.ts"],
+			"@beacon/db": ["../../packages/db/src/index.ts"],
+			"@beacon/monitoring": ["../../packages/monitoring/src/index.ts"],
+			"@beacon/scanner": ["../../packages/scanner/src/index.ts"],
+			"@beacon/queue": ["../../packages/queue/src/index.ts"]
+		},
+		"allowJs": true,
+		"incremental": true
+	},
+	"include": ["src", "next-env.d.ts", ".next/types/**/*.ts"],
+	"exclude": ["node_modules"]
+}

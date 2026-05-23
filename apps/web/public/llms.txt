@@ -1,0 +1,25 @@
+# Beacon — Agentic Web Readiness
+
+> Beacon ist ein SaaS-Tool, das prüft, ob Websites für KI-Agenten bereit sind — und automatisch Fixes generiert. "Lighthouse für Agentic Web Readiness."
+
+## Was Beacon tut
+- Website-Audit mit 10 Checks (llms.txt, robots.txt, Schema.org, Content-Struktur, Meta-Tags, Semantische Qualität, WebMCP, AGENTS.md, Citation-Readiness, Performance)
+- Readiness-Score (0-100) mit Level-Einordnung (0-3: Unsichtbar, Lesbar, Interaktiv, Transaktional)
+- Automatische Fix-Generierung (llms.txt, JSON-LD, robots.txt, AGENTS.md, WebMCP-Attribute)
+- White-Label PDF-Reports für Agenturen
+
+## Zielgruppe
+- Webdesign- und SEO-Agenturen im DACH-Raum
+- Freelance-Webentwickler
+- Unternehmen, die ihre KI-Sichtbarkeit verbessern wollen
+
+## Pricing
+- Free: 0€/Monat — 3 Scans, Basis-Score
+- Starter: 49€/Monat — 50 Scans, Dashboard, PDF-Reports
+- Pro: 149€/Monat — Unbegrenzt Scans, Fix-Generierung, KI-Analyse
+- Agency: 349€/Monat — Multi-Client, White-Label, API
+- Enterprise: 799€/Monat — Unlimited, SSO, Priority Support
+
+## Kontakt
+- Website: https://example.com
+- E-Mail: info@example.com

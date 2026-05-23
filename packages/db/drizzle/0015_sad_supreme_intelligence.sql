@@ -1,0 +1,1 @@
+ALTER TABLE "profiles" ADD COLUMN "feature_overrides" jsonb;

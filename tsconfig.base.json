@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2022"],
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"outDir": "dist",
+		"paths": {
+			"@beacon/shared": ["./packages/shared/src/index.ts"],
+			"@beacon/db": ["./packages/db/src/index.ts"],
+			"@beacon/scanner": ["./packages/scanner/src/index.ts"],
+			"@beacon/ai": ["./packages/ai/src/index.ts"],
+			"@beacon/report": ["./packages/report/src/index.ts"],
+			"@beacon/ui": ["./packages/ui/src/index.ts"],
+			"@beacon/monitoring": ["./packages/monitoring/src/index.ts"],
+			"@beacon/notifications": ["./packages/notifications/src/index.ts"],
+			"@beacon/api-sdk": ["./packages/api-sdk/src/index.ts"],
+			"@beacon/queue": ["./packages/queue/src/index.ts"]
+		}
+	},
+	"exclude": ["node_modules", "dist", ".next", ".turbo"]
+}

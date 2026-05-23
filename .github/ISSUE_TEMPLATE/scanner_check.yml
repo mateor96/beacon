@@ -1,0 +1,38 @@
+name: Scanner Check
+description: Einen neuen Scanner-Check vorschlagen
+title: "[Check]: "
+labels: ["scanner", "feature"]
+body:
+  - type: input
+    id: check-id
+    attributes:
+      label: Check-ID
+      description: "z.B. structured-data, robots-txt"
+      placeholder: "check-id"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Kategorie
+      options:
+        - Technische Basis
+        - Inhaltsqualität
+        - Semantische Struktur
+        - Agentic Readiness
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+      description: Was prüft dieser Check?
+    validations:
+      required: true
+  - type: textarea
+    id: scoring
+    attributes:
+      label: Scoring-Logik
+      description: Wie werden Punkte vergeben?
+    validations:
+      required: true

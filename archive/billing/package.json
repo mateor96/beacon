@@ -1,0 +1,36 @@
+{
+	"name": "@beacon/billing",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./client": {
+			"types": "./src/client.ts",
+			"default": "./src/client.ts"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf dist",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage"
+	},
+	"dependencies": {
+		"@beacon/db": "workspace:*",
+		"@beacon/notifications": "workspace:*",
+		"@beacon/queue": "workspace:*",
+		"@beacon/shared": "workspace:*",
+		"drizzle-orm": "^0.38.3",
+		"stripe": "^20.4.1"
+	},
+	"devDependencies": {
+		"@vitest/coverage-v8": "^3.0.4",
+		"typescript": "^5.7.3",
+		"vitest": "^3.0.0"
+	}
+}

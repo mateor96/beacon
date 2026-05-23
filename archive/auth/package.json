@@ -1,0 +1,37 @@
+{
+	"name": "@beacon/auth",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"files": ["dist"],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./middleware": {
+			"types": "./dist/middleware.d.ts",
+			"default": "./dist/middleware.js"
+		},
+		"./browser": {
+			"types": "./dist/browser.d.ts",
+			"default": "./dist/browser.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf dist",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@supabase/ssr": "^0.6.0",
+		"@supabase/supabase-js": "^2.49.0"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.7",
+		"next": "^15.1.0",
+		"typescript": "^5.7.3",
+		"vitest": "^3.0.0"
+	}
+}

@@ -1,0 +1,226 @@
+// Type-only re-exports (erased at runtime)
+export type {
+	Limit,
+	PlanLimits,
+	PlanFeatures,
+	PlanPricing,
+	PlanConfig,
+	QuotaCheckResult,
+	ScanUsage,
+	FixUsage,
+	MonitoringUsage,
+	DeploymentUsage,
+	ApiCallUsage,
+	WebhookEndpointUsage,
+	LocaleUsage,
+	UsageMetric,
+	UsageSummary,
+	TransitionType,
+	PlanTransition,
+	FeatureGateResult,
+	FeatureName,
+	LimitName,
+	FailBehavior,
+} from "./types.js";
+
+// Plan configuration (runtime)
+export {
+	PLAN_CONFIG,
+	getPlanConfig,
+	getPlanOrder,
+	isWithinLimit,
+	findMinimumPlanFor,
+	findMinimumPlanForLimit,
+	FEATURE_LABELS,
+	FEATURE_FAIL_BEHAVIOR,
+} from "./plans.js";
+
+// Feature guards (runtime)
+export {
+	// Quota guards (rich result)
+	checkScanQuota,
+	checkFixQuota,
+	checkDeploymentQuota,
+	checkMonitoringQuota,
+	checkMonitoringProjectQuota,
+	checkCompetitorQuota,
+	checkApiCallQuota,
+	checkWebhookEndpointQuota,
+	checkLocaleQuota,
+	// Boolean guards
+	canScan,
+	canAddLocale,
+	canFix,
+	canDeploy,
+	canAccessDashboard,
+	canExportPdf,
+	canUseAiAnalysis,
+	canUseMonitoring,
+	canUseAlerts,
+	canUseBatchScan,
+	canUseWhiteLabel,
+	canUseApi,
+	canUseBenchmarking,
+	canUseSso,
+	// Subscription status guard
+	isSubscriptionActive,
+	// Feature access guards
+	checkFeatureAccess,
+	canUseCsvExport,
+	canUseScoreSnapshots,
+	canUseAiVisibilityMonitoring,
+	canUseLlmCitationTracking,
+	canUseCompetitiveIntel,
+	canUseMultiLanguage,
+	canUseRedditTracking,
+	canUseWebhooks,
+	canUseLookerStudio,
+	canUseCustomReportBranding,
+	canUseGuarantee,
+	canUseAffiliateProgram,
+} from "./guards.js";
+
+// Usage helpers (runtime)
+export {
+	EMPTY_SCAN_USAGE,
+	EMPTY_FIX_USAGE,
+	EMPTY_MONITORING_USAGE,
+	buildScanUsage,
+	getUsageSummary,
+} from "./usage.js";
+
+// Transition logic (runtime)
+export {
+	getPlanIndex,
+	comparePlans,
+	getTransitionType,
+	isUpgrade,
+	isDowngrade,
+	getPlanTransition,
+	getDowngradeWarnings,
+} from "./transitions.js";
+
+// Feature resolver
+export { resolveFeatures } from "./feature-resolver.js";
+
+// Stripe integration
+export * as stripe from "./stripe/index.js";
+export type {
+	BillingInterval,
+	CheckoutParams,
+	CheckoutResult,
+	PortalParams,
+	PortalResult,
+	WebhookAction,
+	WebhookResult,
+	BillingErrorCode,
+} from "./stripe/types.js";
+export { BillingError } from "./stripe/types.js";
+
+// Guarantee activation
+export {
+	isGuaranteeEligible,
+	checkGuaranteeEligibility,
+	resolveBaselineUrl,
+	activateGuaranteeBaseline,
+	guaranteeBaselineJobId,
+	GUARANTEE_BASELINE_JOB_PREFIX,
+	GUARANTEE_TERMS_VERSION,
+	GUARANTEE_TERMS_PATH,
+	GUARANTEE_DAY90_JOB_PREFIX,
+	guaranteeDay90JobId,
+	runDay90ComparisonCron,
+	handleDay90ScanCompletion,
+	runMilestoneEmailsCron,
+	processGuaranteeRefund,
+	type Day90CronResult,
+	type MilestoneEmailsResult,
+	type ProcessRefundResult,
+	GUARANTEE_RULE_IDS,
+	isRuleEnabled,
+	type ActivateGuaranteeParams,
+	type ActivateGuaranteeResult,
+	type CheckGuaranteeEligibilityParams,
+	type CheckGuaranteeEligibilityResult,
+	type GuaranteeRuleId,
+} from "./guarantee/index.js";
+
+// Referral program
+export {
+	REFERRAL_TERMS_VERSION,
+	REFERRAL_TERMS_PATH,
+	REFERRAL_ATTRIBUTION_COOKIE,
+	generateUniqueReferralCode,
+	enrollAffiliate,
+	approveAffiliate,
+	rejectAffiliate,
+	attributeSignup,
+	markConversionPaid,
+	computeCommission,
+	getCommissionRule,
+	recordInvoiceCommission,
+	requestPayout,
+	transitionPayout,
+	MIN_PAYOUT_CENTS,
+	sendReferralEmail,
+	type EnrollAffiliateParams,
+	type EnrollAffiliateResult,
+	type ApproveAffiliateResult,
+	type AttributeSignupParams,
+	type AttributeSignupResult,
+	type CommissionRule,
+	type CommissionTier,
+	type ComputeCommissionParams,
+	type ComputeCommissionResult,
+	type RecordInvoiceCommissionParams,
+	type RecordInvoiceCommissionResult,
+	type RequestPayoutParams,
+	type RequestPayoutResult,
+	type TransitionPayoutResult,
+	type ReferralEmailPayload,
+	clawbackCommissionsByInvoice,
+	type ClawbackParams,
+	type ClawbackReason,
+	type ClawbackResult,
+	FRAUD_THRESHOLDS,
+	checkSelfReferral,
+	checkCookieStuffing,
+	checkFakeSignup,
+	checkVelocity,
+	shouldAutoSuspend,
+	type FraudFlag,
+	type FraudRuleId,
+	type SelfReferralCheckInput,
+	type CookieStuffingCheckInput,
+	type FakeSignupCheckInput,
+	type VelocityCheckInput,
+} from "./referral/index.js";
+
+// Competitive intelligence
+export {
+	checkCompetitiveAccess,
+	getCompetitorScanFrequencyDays,
+	COMPETITOR_SCAN_JOB_PREFIX,
+	competitorScanJobId,
+	enqueueCompetitorScan,
+	calculateBenchmark,
+	calculateTrend,
+	trendThreshold,
+	recordScore,
+	pruneOldHistory,
+	getCitationShareForProject,
+	BEACON_DEFAULT_BRANDING,
+	getBrandingForUser,
+	type CompetitiveAccessCheck,
+	type CompetitiveAccessResult,
+	type EnqueueCompetitorScanParams,
+	type EnqueueCompetitorScanResult,
+	type Dimension,
+	type DimensionScore,
+	type ClientScoreInput,
+	type CompetitorScoreInput,
+	type BenchmarkPerDimension,
+	type CalculateBenchmarkResult,
+	type TrendDirection,
+	type CitationShareRow,
+} from "./competitive/index.js";

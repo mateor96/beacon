@@ -1,0 +1,293 @@
+{
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1773439124972,
+			"tag": "0000_aromatic_santa_claus",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1773442401825,
+			"tag": "0001_outgoing_silver_surfer",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1773517606411,
+			"tag": "0002_cold_rocket_raccoon",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1773897600000,
+			"tag": "0003_analysis_status_columns",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1773984000000,
+			"tag": "0004_fix_report_lifecycle",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1773984100000,
+			"tag": "0005_webhook_billing_columns",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1774000000000,
+			"tag": "0006_dead_letter_jobs",
+			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "7",
+			"when": 1774000100000,
+			"tag": "0007_webhook_hardening",
+			"breakpoints": true
+		},
+		{
+			"idx": 8,
+			"version": "7",
+			"when": 1774000200000,
+			"tag": "0008_quota_period_start",
+			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1774000300000,
+			"tag": "0009_stale_event_guard",
+			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1774000400000,
+			"tag": "0010_scan_quota_compensation",
+			"breakpoints": true
+		},
+		{
+			"idx": 11,
+			"version": "7",
+			"when": 1774217738617,
+			"tag": "0011_ttl_columns",
+			"breakpoints": true
+		},
+		{
+			"idx": 12,
+			"version": "7",
+			"when": 1774218000000,
+			"tag": "0012_monitoring_enabled_notnull",
+			"breakpoints": true
+		},
+		{
+			"idx": 13,
+			"version": "7",
+			"when": 1774218100000,
+			"tag": "0013_add_final_url",
+			"breakpoints": true
+		},
+		{
+			"idx": 14,
+			"version": "7",
+			"when": 1774470588424,
+			"tag": "0014_waitlist_and_scans_index",
+			"breakpoints": true
+		},
+		{
+			"idx": 15,
+			"version": "7",
+			"when": 1775256847014,
+			"tag": "0015_sad_supreme_intelligence",
+			"breakpoints": true
+		},
+		{
+			"idx": 16,
+			"version": "7",
+			"when": 1775298551481,
+			"tag": "0016_ancient_skreet",
+			"breakpoints": true
+		},
+		{
+			"idx": 17,
+			"version": "7",
+			"when": 1775302559931,
+			"tag": "0017_elite_mandroid",
+			"breakpoints": true
+		},
+		{
+			"idx": 18,
+			"version": "7",
+			"when": 1775321320927,
+			"tag": "0018_demonic_prima",
+			"breakpoints": true
+		},
+		{
+			"idx": 19,
+			"version": "7",
+			"when": 1775720340719,
+			"tag": "0019_fix_generation_schema",
+			"breakpoints": true
+		},
+		{
+			"idx": 20,
+			"version": "7",
+			"when": 1775856406733,
+			"tag": "0020_orange_marvel_boy",
+			"breakpoints": true
+		},
+		{
+			"idx": 21,
+			"version": "7",
+			"when": 1776548366075,
+			"tag": "0021_unique_sharon_carter",
+			"breakpoints": true
+		},
+		{
+			"idx": 22,
+			"version": "7",
+			"when": 1776548791733,
+			"tag": "0022_sparkling_namorita",
+			"breakpoints": true
+		},
+		{
+			"idx": 23,
+			"version": "7",
+			"when": 1776549251013,
+			"tag": "0023_clean_the_fallen",
+			"breakpoints": true
+		},
+		{
+			"idx": 24,
+			"version": "7",
+			"when": 1776550618665,
+			"tag": "0024_lush_catseye",
+			"breakpoints": true
+		},
+		{
+			"idx": 25,
+			"version": "7",
+			"when": 1776567722428,
+			"tag": "0025_dashing_timeslip",
+			"breakpoints": true
+		},
+		{
+			"idx": 26,
+			"version": "7",
+			"when": 1776614986872,
+			"tag": "0026_guarantee_schema",
+			"breakpoints": true
+		},
+		{
+			"idx": 27,
+			"version": "7",
+			"when": 1776616000000,
+			"tag": "0027_referral_schema",
+			"breakpoints": true
+		},
+		{
+			"idx": 28,
+			"version": "7",
+			"when": 1776617000000,
+			"tag": "0028_competitive_schema",
+			"breakpoints": true
+		},
+		{
+			"idx": 29,
+			"version": "7",
+			"when": 1776618000000,
+			"tag": "0029_locales_schema",
+			"breakpoints": true
+		},
+		{
+			"idx": 30,
+			"version": "7",
+			"when": 1776619000000,
+			"tag": "0030_locale_region_context",
+			"breakpoints": true
+		},
+		{
+			"idx": 31,
+			"version": "7",
+			"when": 1776620000000,
+			"tag": "0031_scans_locale_time_index",
+			"breakpoints": true
+		},
+		{
+			"idx": 32,
+			"version": "7",
+			"when": 1776621000000,
+			"tag": "0032_reddit_schema",
+			"breakpoints": true
+		},
+		{
+			"idx": 33,
+			"version": "7",
+			"when": 1776622000000,
+			"tag": "0033_csv_exports",
+			"breakpoints": true
+		},
+		{
+			"idx": 34,
+			"version": "7",
+			"when": 1776623000000,
+			"tag": "0034_referral_fraud_flags",
+			"breakpoints": true
+		},
+		{
+			"idx": 35,
+			"version": "7",
+			"when": 1776624000000,
+			"tag": "0035_competitors_locale",
+			"breakpoints": true
+		},
+		{
+			"idx": 36,
+			"version": "7",
+			"when": 1776625000000,
+			"tag": "0036_competitors_industry_unique",
+			"breakpoints": true
+		},
+		{
+			"idx": 37,
+			"version": "7",
+			"when": 1776626000000,
+			"tag": "0037_report_shares",
+			"breakpoints": true
+		},
+		{
+			"idx": 38,
+			"version": "7",
+			"when": 1776627000000,
+			"tag": "0038_referral_commission_payout_fk",
+			"breakpoints": true
+		},
+		{
+			"idx": 39,
+			"version": "7",
+			"when": 1779660000000,
+			"tag": "0039_smoke_fix_missing_tables",
+			"breakpoints": true
+		},
+		{
+			"idx": 40,
+			"version": "7",
+			"when": 1779852400000,
+			"tag": "0040_drop_billing_columns",
+			"breakpoints": true
+		}
+	]
+}

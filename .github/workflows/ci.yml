@@ -1,0 +1,161 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Primary CI (Tier 1 Release Gate) ───────────────────────
+  # Required status check for branch protection (ADR-008).
+  # All tests are mocked — no DB/Redis/Supabase needed.
+  # Coverage reports to stdout via @vitest/coverage-v8.
+  ci:
+    name: Lint, Typecheck, Test, Build, Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test (with coverage)
+        run: pnpm test -- --coverage
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check for stray tsc emit in src/
+        run: |
+          STRAY=$(find packages/*/src apps/*/src -type f \( -name "*.js" -o -name "*.js.map" -o -name "*.d.ts" -o -name "*.d.ts.map" \) \
+            ! -path "packages/shared/src/disposable-email-domains.d.ts" 2>/dev/null || true)
+          if [ -n "$STRAY" ]; then
+            echo "::error::Stray tsc emit found in src/ directories:"
+            echo "$STRAY"
+            exit 1
+          fi
+
+      - name: Verify web workspace policy
+        run: pnpm verify:web-workspace-policy
+
+      - name: Verify shared published contract
+        run: pnpm verify:shared
+
+  # ── Integration Tests (Tier 2 — informational, not a merge gate) ─
+  # Runs @beacon/db integration tests against real Postgres.
+  # Migrations run inside the test's beforeAll hook (self-contained).
+  # Promote to required status check after 2 weeks of stable green runs.
+  # No Redis needed — current tests are DB-only.
+  integration-tests:
+    name: DB Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: beacon_test
+          POSTGRES_PASSWORD: beacon_test
+          POSTGRES_DB: beacon_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U beacon_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://beacon_test:beacon_test@localhost:5432/beacon_test
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run DB integration tests
+        run: pnpm --filter @beacon/db test:integration
+
+  # ── Migration Chain Check (Tier 2 — informational) ──────────
+  # Runs the full Drizzle migration chain (0000 → latest) against a
+  # fresh Postgres instance. Catches broken SQL, ordering issues, and
+  # missing tables/columns before deploy.
+  # Complements integration-tests (which runs migrations as a side effect).
+  # Promote to required status check after 2 weeks of stable green runs.
+  migration-check:
+    name: Migration Chain Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: beacon_test
+          POSTGRES_PASSWORD: beacon_test
+          POSTGRES_DB: beacon_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U beacon_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://beacon_test:beacon_test@localhost:5432/beacon_test
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run migration chain (empty → latest)
+        run: pnpm --filter @beacon/db db:migrate-run
+
+      - name: Verify tables exist
+        run: |
+          TABLE_COUNT=$(psql "$DATABASE_URL" -t -A -c \
+            "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'")
+          echo "Tables created: $TABLE_COUNT"
+          psql "$DATABASE_URL" -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' ORDER BY table_name;"
+          if [ "$TABLE_COUNT" -lt 17 ]; then
+            echo "::error::Expected at least 17 tables, got $TABLE_COUNT"
+            exit 1
+          fi

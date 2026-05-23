@@ -1,0 +1,38 @@
+{
+	"name": "beacon",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@9.15.4",
+	"scripts": {
+		"build": "turbo run build",
+		"ci:local": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm verify:web-workspace-policy && pnpm verify:shared",
+		"dev": "dotenv -e .env -- turbo run dev",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"typecheck": "turbo run typecheck",
+		"test": "vitest run --passWithNoTests",
+		"db:migrate": "dotenv -e .env -- pnpm --filter @beacon/db migrate",
+		"db:generate": "dotenv -e .env -- pnpm --filter @beacon/db generate",
+		"verify:shared": "node scripts/verify-shared-published-contract.mjs",
+		"verify:web-workspace-policy": "node scripts/verify-web-workspace-policy.mjs",
+		"dev:e2e": "dotenv -e .env.test -- turbo run dev",
+		"dev:e2e:web": "dotenv -e .env.test -- pnpm --filter @beacon/web dev",
+		"dev:e2e:worker": "dotenv -e .env.test -- pnpm --filter @beacon/worker dev",
+		"db:migrate:test": "dotenv -e .env.test -- pnpm --filter @beacon/db migrate",
+		"db:seed-rpc:test": "dotenv -e .env.test -- pnpm --filter @beacon/db db:seed-rpc",
+		"test:e2e": "dotenv -e .env.test -- playwright test --config e2e/playwright.config.ts",
+		"test:e2e:ui": "dotenv -e .env.test -- playwright test --config e2e/playwright.config.ts --ui",
+		"clean": "turbo run clean && rm -rf node_modules"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@playwright/test": "^1.58.2",
+		"@supabase/supabase-js": "^2.49.0",
+		"dotenv-cli": "^11.0.0",
+		"ioredis": "^5.10.0",
+		"postgres": "^3.4.5",
+		"turbo": "^2.3.3",
+		"typescript": "^5.7.3",
+		"vitest": "^3.0.4"
+	}
+}

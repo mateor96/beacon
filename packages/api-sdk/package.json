@@ -1,0 +1,25 @@
+{
+	"name": "@beacon/api-sdk",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"clean": "rm -rf dist"
+	},
+	"dependencies": {
+		"@beacon/shared": "workspace:*",
+		"zod": "^3.23.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.3"
+	}
+}

@@ -1,0 +1,40 @@
+services:
+  web:
+    ports: !reset []
+    env_file: !override
+      - .env.production
+    restart: always
+
+  worker:
+    ports: !reset []
+    env_file: !override
+      - .env.production
+    restart: always
+
+  redis:
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    ports: !reset []
+    restart: always
+
+  db:
+    ports: !reset []
+    restart: always
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  redis-data:
+  postgres-data:
+  caddy-data:
+  caddy-config:

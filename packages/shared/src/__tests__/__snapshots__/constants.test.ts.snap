@@ -1,0 +1,90 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CHECK_REGISTRY > matches the exact registry snapshot 1`] = `
+[
+  {
+    "category": "readability",
+    "id": "llms-txt",
+    "name": "llms.txt (KI-Visitenkarte)",
+    "severity": "critical",
+  },
+  {
+    "category": "readability",
+    "id": "robots-txt",
+    "name": "robots.txt (Zugangsregeln für KI)",
+    "severity": "critical",
+  },
+  {
+    "category": "readability",
+    "id": "sitemap-xml",
+    "name": "Sitemap (Inhaltsverzeichnis)",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "schema-org",
+    "name": "Strukturierte Daten (Schema.org)",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "content-structure",
+    "name": "Content-Struktur",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "performance",
+    "name": "Crawl-Effizienz",
+    "severity": "nice-to-have",
+  },
+  {
+    "category": "readability",
+    "id": "meta-tags",
+    "name": "Meta-Tags & Social-Vorschau",
+    "severity": "important",
+  },
+  {
+    "category": "interactivity",
+    "id": "webmcp",
+    "name": "KI-Agenten-Schnittstelle (MCP)",
+    "severity": "nice-to-have",
+  },
+  {
+    "category": "interactivity",
+    "id": "agents-md",
+    "name": "AGENTS.md (KI-Agenten-Anleitung)",
+    "severity": "nice-to-have",
+  },
+  {
+    "category": "readability",
+    "id": "semantic-quality",
+    "name": "Textqualität",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "citation-readiness",
+    "name": "Zitierbarkeit",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "content-freshness",
+    "name": "Aktualitätssignale",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "faq-schema",
+    "name": "FAQ & Anleitungen (Schema)",
+    "severity": "important",
+  },
+  {
+    "category": "readability",
+    "id": "js-rendering",
+    "name": "Sichtbarkeit ohne JavaScript",
+    "severity": "critical",
+  },
+]
+`;

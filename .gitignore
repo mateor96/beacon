@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.next/
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.bak
+!.env.example
+!.env.test.example
+
+# Test
+coverage/
+e2e/test-results/
+e2e/playwright-report/
+e2e/.auth/
+.env.test
+
+# Database — track migration SQL + journal, ignore snapshots
+packages/db/drizzle/meta/[0-9]*_snapshot.json
+
+# Claude Code (local agent/skill tooling, not part of the public project)
+.claude/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# R / generated docs
+.Rhistory
+docs/*.html
+
+# Stray tsc emit guard (#351)
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+apps/*/src/**/*.js
+apps/*/src/**/*.js.map
+apps/*/src/**/*.d.ts
+apps/*/src/**/*.d.ts.map
+!packages/shared/src/disposable-email-domains.d.ts
+
+# Docker
+docker-compose.override.yml

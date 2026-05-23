@@ -1,0 +1,26 @@
+{
+	"name": "@beacon/notifications",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"clean": "rm -rf dist"
+	},
+	"dependencies": {
+		"@beacon/shared": "workspace:*",
+		"@beacon/db": "workspace:*",
+		"@beacon/queue": "workspace:*",
+		"resend": "^4.1.2"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.3"
+	}
+}
