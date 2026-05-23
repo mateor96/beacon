@@ -258,6 +258,19 @@ export interface WebhookDeliveryJobResult {
 	responseStatus: number | null;
 }
 
+export interface CrawlJobData {
+	crawlId: string;
+	rootUrl: string;
+	maxPages?: number;
+	maxDepth?: number;
+}
+
+export interface CrawlJobResult {
+	crawlId: string;
+	pagesProcessed: number;
+	robotsBlocked: number;
+}
+
 // ── Type Maps ───────────────────────────────────────────────
 
 export interface JobDataMap {
@@ -278,6 +291,7 @@ export interface JobDataMap {
 	"citation-extraction": CitationExtractionJobData;
 	"csv-export": CsvExportJobData;
 	"webhook-delivery": WebhookDeliveryJobData;
+	crawl: CrawlJobData;
 }
 
 export interface JobResultMap {
@@ -298,6 +312,7 @@ export interface JobResultMap {
 	"citation-extraction": CitationExtractionJobResult;
 	"csv-export": CsvExportJobResult;
 	"webhook-delivery": WebhookDeliveryJobResult;
+	crawl: CrawlJobResult;
 }
 
 export type QueueName = keyof JobDataMap;

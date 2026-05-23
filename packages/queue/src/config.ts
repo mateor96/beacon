@@ -34,6 +34,7 @@ export const QUEUE_NAMES = [
 	"citation-extraction",
 	"csv-export",
 	"webhook-delivery",
+	"crawl",
 ] as const satisfies readonly QueueName[];
 
 export const QUEUE_PREFIX = "beacon";
@@ -222,6 +223,16 @@ export const QUEUE_CONFIG: Record<QueueName, QueueConfig> = {
 		defaultJobOptions: {
 			attempts: 5,
 			backoff: { type: "exponential", delay: 2_000 },
+			removeOnComplete: { age: 86_400 },
+			removeOnFail: { age: 604_800 },
+		},
+	},
+	crawl: {
+		concurrency: 1, // one crawl at a time per host — politeness
+		lockDuration: 600_000, // crawls can take minutes
+		defaultJobOptions: {
+			attempts: 2,
+			backoff: { type: "exponential", delay: 30_000 },
 			removeOnComplete: { age: 86_400 },
 			removeOnFail: { age: 604_800 },
 		},

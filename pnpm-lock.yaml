@@ -123,6 +123,9 @@ importers:
       '@beacon/api-sdk':
         specifier: workspace:*
         version: link:../../packages/api-sdk
+      '@beacon/crawler':
+        specifier: workspace:*
+        version: link:../../packages/crawler
       '@beacon/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -228,6 +231,22 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+
+  packages/crawler:
+    dependencies:
+      '@beacon/scanner':
+        specifier: workspace:*
+        version: link:../scanner
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.7
+        version: 22.19.15
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.4
+        version: 3.2.4(@types/debug@4.1.13)(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.3)
 
   packages/db:
     dependencies:

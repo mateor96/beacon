@@ -80,6 +80,7 @@ describe("GET /health", () => {
 			"citation-extraction",
 			"csv-export",
 			"webhook-delivery",
+			"crawl",
 		]);
 	});
 

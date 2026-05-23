@@ -1,6 +1,7 @@
+import { CrawlTrigger } from "@/components/monitoring/crawl-trigger";
 import { DeleteProjectButton } from "@/components/monitoring/delete-project-button";
 import { RoiReportTrigger } from "@/components/monitoring/roi-report-trigger";
-import { aiVisibilityQueries, db, monitoringQueries, roiQueries } from "@beacon/db";
+import { aiVisibilityQueries, crawlQueries, db, monitoringQueries, roiQueries } from "@beacon/db";
 import { UuidSchema } from "@beacon/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -25,6 +26,7 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 
 	const snapshots = await aiVisibilityQueries.getSnapshotsByProjectId(db, id, { limit: 20 });
 	const roiReports = await roiQueries.getReportsForProject(db, id);
+	const crawls = await crawlQueries.listForProject(db, id, { limit: 5 });
 
 	return (
 		<main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -108,6 +110,44 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 								>
 									PDF herunterladen
 								</a>
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
+
+			<section className="mb-8">
+				<div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+					<h2 className="text-xl font-semibold text-text">Site-Crawls</h2>
+					<CrawlTrigger projectId={id} />
+				</div>
+				{crawls.length === 0 ? (
+					<p className="rounded-lg border border-border bg-surface p-6 text-text-muted">
+						Noch kein Crawl. Klicke "Site crawlen" oben — der Crawler entdeckt bis zu 200
+						Unterseiten (max. 3 Ebenen tief, respektiert robots.txt).
+					</p>
+				) : (
+					<ul className="divide-y divide-border rounded-lg border border-border bg-white">
+						{crawls.map((c) => (
+							<li key={c.id} className="flex items-center justify-between px-4 py-3 text-sm">
+								<div>
+									<div className="font-medium text-text">{c.rootUrl}</div>
+									<div className="text-xs text-text-muted">
+										{c.startedAt ? new Date(c.startedAt).toLocaleString("de-DE") : "—"} · Pages:{" "}
+										{c.pagesScanned ?? 0}/{c.pagesFound ?? 0}
+									</div>
+								</div>
+								<span
+									className={`rounded-full px-3 py-1 text-xs font-medium ${
+										c.status === "completed"
+											? "bg-success/10 text-success"
+											: c.status === "failed"
+												? "bg-danger/10 text-danger"
+												: "bg-border/40 text-text-muted"
+									}`}
+								>
+									{c.status}
+								</span>
 							</li>
 						))}
 					</ul>

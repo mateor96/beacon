@@ -20,17 +20,25 @@ export function getById(db: DbClient, id: string) {
 	});
 }
 
-export function getByUserId(
-	db: DbClient,
-	userId: string,
-	opts: { limit?: number; offset?: number } = {},
-) {
+export function listAll(db: DbClient, opts: { limit?: number; offset?: number } = {}) {
 	const { limit = 20, offset = 0 } = opts;
 	return db.query.siteCrawls.findMany({
-		where: eq(siteCrawls.userId, userId),
 		orderBy: desc(siteCrawls.startedAt),
 		limit,
 		offset,
+	});
+}
+
+export function listForProject(
+	db: DbClient,
+	monitoringProjectId: string,
+	opts: { limit?: number } = {},
+) {
+	const { limit = 20 } = opts;
+	return db.query.siteCrawls.findMany({
+		where: eq(siteCrawls.monitoringProjectId, monitoringProjectId),
+		orderBy: desc(siteCrawls.startedAt),
+		limit,
 	});
 }
 

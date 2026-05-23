@@ -453,16 +453,16 @@ export async function getCitationFrequencyForPage(
 /**
  * Basic metadata for a client (site_crawl_pages) page: id + url. Used to
  * label the detail view header without exposing the full crawl record.
+ *
+ * v0.2: instance-scoped — no user ownership join. The crawl_id FK
+ * is preserved so soft-deleted pages still resolve.
  */
-export function getClientPageMeta(db: DbClient, userId: string, clientPageId: string) {
-	// Ownership joins through site_crawls.user_id, not site_crawl_pages.scan_id
-	// (the latter is nullable via ON DELETE SET NULL, so the innerJoin would
-	// silently drop legitimate pages whose scan was deleted).
+export function getClientPageMeta(db: DbClient, clientPageId: string) {
 	return db
 		.select({ id: siteCrawlPages.id, url: siteCrawlPages.url })
 		.from(siteCrawlPages)
 		.innerJoin(siteCrawls, eq(siteCrawlPages.crawlId, siteCrawls.id))
-		.where(and(eq(siteCrawlPages.id, clientPageId), eq(siteCrawls.userId, userId)))
+		.where(eq(siteCrawlPages.id, clientPageId))
 		.limit(1)
 		.then((rows) => rows[0] ?? null);
 }
