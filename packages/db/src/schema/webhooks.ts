@@ -9,7 +9,6 @@ import {
 	timestamp,
 	uuid,
 } from "drizzle-orm/pg-core";
-import { profiles } from "./profiles";
 
 // ─── Enums (text + const arrays; repo convention, no pgEnum) ─────────────
 
@@ -23,10 +22,6 @@ export const webhookEndpoints = pgTable(
 	"webhook_endpoints",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-
-		userId: uuid("user_id")
-			.references(() => profiles.id, { onDelete: "cascade" })
-			.notNull(),
 
 		url: text("url").notNull(),
 
@@ -45,8 +40,7 @@ export const webhookEndpoints = pgTable(
 			.$onUpdateFn(() => new Date()),
 	},
 	(table) => [
-		index("idx_webhook_endpoints_user").on(table.userId),
-		index("idx_webhook_endpoints_user_active").on(table.userId).where(sql`${table.active} = true`),
+		index("idx_webhook_endpoints_active").on(table.active).where(sql`${table.active} = true`),
 	],
 );
 
@@ -84,8 +78,7 @@ export const webhookDeliveries = pgTable(
 
 // ─── Relations ───────────────────────────────────────────────────────────
 
-export const webhookEndpointsRelations = relations(webhookEndpoints, ({ one, many }) => ({
-	user: one(profiles, { fields: [webhookEndpoints.userId], references: [profiles.id] }),
+export const webhookEndpointsRelations = relations(webhookEndpoints, ({ many }) => ({
 	deliveries: many(webhookDeliveries),
 }));
 

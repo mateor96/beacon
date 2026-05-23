@@ -14,7 +14,6 @@ export * as monitoringQueries from "./monitoring";
 export * as crawlQueries from "./crawls";
 export * as benchmarkQueries from "./benchmarks";
 export * as alertQueries from "./alerts";
-export * as apiKeyQueries from "./api-keys";
 export * as cleanupQueries from "./cleanup";
 export * as waitlistQueries from "./waitlist";
 export * as deadLetterJobQueries from "./dead-letter-jobs";

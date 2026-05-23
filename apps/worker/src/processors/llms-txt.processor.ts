@@ -19,12 +19,6 @@ export async function processLlmsTxt(
 	if (!scan.htmlContent) {
 		throw new Error(`Scan ${scanId} has no htmlContent`);
 	}
-	if (!scan.userId) {
-		throw new Error(
-			`Scan ${scanId} has no userId — anonymous scans are not supported for llms.txt generation`,
-		);
-	}
-
 	const checks = (scan.checks ?? []) as LlmsCheckSummary[];
 	const llmsCheck = checks.find((c) => c.id === "llms-txt");
 
@@ -35,7 +29,6 @@ export async function processLlmsTxt(
 	const result = await generateLlmsTxt(
 		{
 			scanId,
-			userId: scan.userId,
 			finalUrl,
 			htmlContent: scan.htmlContent,
 			llmsCheck,

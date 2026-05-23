@@ -1,6 +1,4 @@
-import { relations } from "drizzle-orm";
 import { bigint, index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { profiles } from "./profiles";
 
 // ── Enum constants ──────────────────────────────────────────
 
@@ -27,9 +25,6 @@ export const csvExports = pgTable(
 	"csv_exports",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("user_id")
-			.references(() => profiles.id, { onDelete: "cascade" })
-			.notNull(),
 		entity: text("entity", { enum: CSV_EXPORT_ENTITIES }).notNull(),
 		/** Column ids included in the output. NULL = default set. */
 		columns: jsonb("columns").$type<string[] | null>(),
@@ -49,19 +44,10 @@ export const csvExports = pgTable(
 		createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	},
 	(table) => [
-		index("idx_csv_exports_user_created").on(table.userId, table.createdAt.desc()),
+		index("idx_csv_exports_created").on(table.createdAt.desc()),
 		index("idx_csv_exports_status").on(table.status),
 	],
 );
-
-// ── Relations ───────────────────────────────────────────────
-
-export const csvExportsRelations = relations(csvExports, ({ one }) => ({
-	user: one(profiles, {
-		fields: [csvExports.userId],
-		references: [profiles.id],
-	}),
-}));
 
 // ── Type exports ────────────────────────────────────────────
 

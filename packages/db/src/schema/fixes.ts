@@ -10,7 +10,6 @@ import {
 	uniqueIndex,
 	uuid,
 } from "drizzle-orm/pg-core";
-import { profiles } from "./profiles";
 import { scans } from "./scans";
 
 // ─── Enums (text + const arrays; repo convention, no pgEnum) ─────────────
@@ -50,10 +49,6 @@ export const generatedFixes = pgTable(
 
 		scanId: uuid("scan_id")
 			.references(() => scans.id, { onDelete: "cascade" })
-			.notNull(),
-
-		userId: uuid("user_id")
-			.references(() => profiles.id, { onDelete: "cascade" })
 			.notNull(),
 
 		fixType: text("fix_type", { enum: FIX_TYPES }).notNull(),
@@ -104,11 +99,10 @@ export const generatedFixes = pgTable(
 			.on(table.scanId, table.fixType, table.version)
 			.where(sql`${table.deletedAt} IS NULL`),
 		index("idx_generated_fixes_scan").on(table.scanId),
-		index("idx_generated_fixes_user").on(table.userId),
 		index("idx_generated_fixes_fix_type").on(table.fixType),
 		index("idx_generated_fixes_status").on(table.status).where(sql`${table.status} != 'deployed'`),
-		index("idx_generated_fixes_user_type_created")
-			.on(table.userId, table.fixType, table.createdAt.desc())
+		index("idx_generated_fixes_type_created")
+			.on(table.fixType, table.createdAt.desc())
 			.where(sql`${table.deletedAt} IS NULL`),
 		index("idx_generated_fixes_content_hash").on(table.contentHash),
 	],
@@ -122,10 +116,6 @@ export const cmsConnections = pgTable(
 	"cms_connections",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-
-		userId: uuid("user_id")
-			.references(() => profiles.id, { onDelete: "cascade" })
-			.notNull(),
 
 		cmsType: text("cms_type", { enum: CMS_TYPES }).notNull(),
 		siteUrl: text("site_url").notNull(),
@@ -145,12 +135,11 @@ export const cmsConnections = pgTable(
 		deletedAt: timestamp("deleted_at", { withTimezone: true }),
 	},
 	(table) => [
-		index("idx_cms_connections_user").on(table.userId),
-		index("idx_cms_connections_user_active")
-			.on(table.userId, table.cmsType)
+		index("idx_cms_connections_active")
+			.on(table.cmsType)
 			.where(sql`${table.isActive} = true AND ${table.deletedAt} IS NULL`),
 		uniqueIndex("uq_cms_connections_active_per_site")
-			.on(table.userId, table.cmsType, table.siteUrl)
+			.on(table.cmsType, table.siteUrl)
 			.where(sql`${table.deletedAt} IS NULL`),
 	],
 );
@@ -255,22 +244,10 @@ export const fixValidations = pgTable(
 
 export const generatedFixesRelations = relations(generatedFixes, ({ one, many }) => ({
 	scan: one(scans, { fields: [generatedFixes.scanId], references: [scans.id] }),
-	user: one(profiles, {
-		fields: [generatedFixes.userId],
-		references: [profiles.id],
-	}),
 	deployments: many(deploymentAttempts),
 }));
 
-// NOTE on profiles inverse: per decision D21, `generated_fixes` has only ONE
-// FK to `profiles` (`user_id`), so no `relationName` disambiguation is needed
-// and no inverse `generatedFixesAsUser`/`AsApprover` declarations are required
-// in `relations.ts`. If a future PR adds the approval columns, the matching
-// `relationName` pair MUST be added on BOTH sides simultaneously, otherwise
-// Drizzle will throw "ambiguous relation" at first query traversal.
-
-export const cmsConnectionsRelations = relations(cmsConnections, ({ one, many }) => ({
-	user: one(profiles, { fields: [cmsConnections.userId], references: [profiles.id] }),
+export const cmsConnectionsRelations = relations(cmsConnections, ({ many }) => ({
 	deployments: many(deploymentAttempts),
 }));
 

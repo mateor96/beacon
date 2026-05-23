@@ -147,11 +147,13 @@ export function decryptCmsCredentials({ envelope, aad }: DecryptParams): string 
 
 /**
  * AAD helper. MUST be used at both encrypt and decrypt time. Binds the
- * envelope to the row's identity so that swapping `id` or `user_id` in
- * the database invalidates the auth tag at decrypt time.
+ * envelope to the row id so that swapping `id` in the database invalidates
+ * the auth tag at decrypt time. The previous version also bound to
+ * `user_id`; that field was dropped in v0.2 (instance-scoped feature
+ * reactivation, #2).
  */
-export function cmsCredentialsAad(connectionId: string, userId: string): string {
-	return `cms_connection:${connectionId}:user:${userId}`;
+export function cmsCredentialsAad(connectionId: string): string {
+	return `cms_connection:${connectionId}`;
 }
 
 /**

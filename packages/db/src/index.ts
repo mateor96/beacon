@@ -9,7 +9,6 @@ export {
 	crawlQueries,
 	benchmarkQueries,
 	alertQueries,
-	apiKeyQueries,
 	cleanupQueries,
 	waitlistQueries,
 	deadLetterJobQueries,

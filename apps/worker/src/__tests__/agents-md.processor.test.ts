@@ -88,7 +88,6 @@ describe("processAgentsMd", () => {
 		expect(mockGenerateAgentsMd).toHaveBeenCalledTimes(1);
 		const call = mockGenerateAgentsMd.mock.calls[0]?.[0] as {
 			scanId: string;
-			userId: string;
 			finalUrl: string;
 			htmlContent: string;
 			agentsMdCheck: { id: string };
@@ -96,7 +95,6 @@ describe("processAgentsMd", () => {
 			force?: boolean;
 		};
 		expect(call.scanId).toBe(baseScan.id);
-		expect(call.userId).toBe(baseScan.userId);
 		expect(call.finalUrl).toBe(baseScan.finalUrl);
 		expect(call.htmlContent).toBe(baseScan.htmlContent);
 		expect(call.agentsMdCheck?.id).toBe("agents-md");
@@ -150,14 +148,6 @@ describe("processAgentsMd", () => {
 		mockGetById.mockResolvedValue({ ...baseScan, htmlContent: null });
 		await expect(processAgentsMd(makeJob({ scanId: baseScan.id }))).rejects.toThrow(
 			/no htmlContent/,
-		);
-		expect(mockGenerateAgentsMd).not.toHaveBeenCalled();
-	});
-
-	it("throws when the scan has no userId (anonymous scans unsupported)", async () => {
-		mockGetById.mockResolvedValue({ ...baseScan, userId: null });
-		await expect(processAgentsMd(makeJob({ scanId: baseScan.id }))).rejects.toThrow(
-			/anonymous scans are not supported/,
 		);
 		expect(mockGenerateAgentsMd).not.toHaveBeenCalled();
 	});

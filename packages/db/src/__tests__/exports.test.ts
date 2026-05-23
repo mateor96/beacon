@@ -24,7 +24,6 @@ describe("@beacon/db exports", () => {
 			"crawlQueries",
 			"benchmarkQueries",
 			"alertQueries",
-			"apiKeyQueries",
 			"cleanupQueries",
 			"waitlistQueries",
 			"deadLetterJobQueries",

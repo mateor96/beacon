@@ -9,7 +9,6 @@ import {
 // ─── webhook_endpoints ──────────────────────────────────────────────────
 
 export interface CreateWebhookEndpointInput {
-	userId: string;
 	url: string;
 	encryptedSecret: string;
 	events: string[];
@@ -22,7 +21,6 @@ export async function create(
 	const inserted = await db
 		.insert(webhookEndpoints)
 		.values({
-			userId: input.userId,
 			url: input.url,
 			encryptedSecret: input.encryptedSecret,
 			events: input.events,
@@ -33,15 +31,10 @@ export async function create(
 	return row;
 }
 
-export async function listByUserId(
+export async function listAll(
 	db: DbClient,
-	userId: string,
 ): Promise<Array<Omit<typeof webhookEndpoints.$inferSelect, "encryptedSecret">>> {
-	const rows = await db
-		.select()
-		.from(webhookEndpoints)
-		.where(eq(webhookEndpoints.userId, userId))
-		.orderBy(desc(webhookEndpoints.createdAt));
+	const rows = await db.select().from(webhookEndpoints).orderBy(desc(webhookEndpoints.createdAt));
 	return rows.map(({ encryptedSecret: _omit, ...rest }) => rest);
 }
 
@@ -77,14 +70,6 @@ export async function update(
 
 export async function deleteById(db: DbClient, endpointId: string): Promise<void> {
 	await db.delete(webhookEndpoints).where(eq(webhookEndpoints.id, endpointId));
-}
-
-export async function countByUserId(db: DbClient, userId: string): Promise<number> {
-	const rows = await db
-		.select({ count: sql<number>`count(*)::int` })
-		.from(webhookEndpoints)
-		.where(eq(webhookEndpoints.userId, userId));
-	return rows[0]?.count ?? 0;
 }
 
 // ─── webhook_deliveries ─────────────────────────────────────────────────

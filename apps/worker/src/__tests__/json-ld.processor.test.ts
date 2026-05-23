@@ -84,14 +84,12 @@ describe("processJsonLd", () => {
 		expect(mockGenerateSchemaOrg).toHaveBeenCalledTimes(1);
 		const call = mockGenerateSchemaOrg.mock.calls[0]?.[0] as {
 			scanId: string;
-			userId: string;
 			finalUrl: string;
 			htmlContent: string;
 			schemaOrgCheck: { id: string };
 			force?: boolean;
 		};
 		expect(call.scanId).toBe(baseScan.id);
-		expect(call.userId).toBe(baseScan.userId);
 		expect(call.finalUrl).toBe(baseScan.finalUrl);
 		expect(call.htmlContent).toBe(baseScan.htmlContent);
 		expect(call.schemaOrgCheck?.id).toBe("schema-org");
@@ -143,14 +141,6 @@ describe("processJsonLd", () => {
 	it("throws when the scan has no htmlContent", async () => {
 		mockGetById.mockResolvedValue({ ...baseScan, htmlContent: null });
 		await expect(processJsonLd(makeJob({ scanId: baseScan.id }))).rejects.toThrow(/no htmlContent/);
-		expect(mockGenerateSchemaOrg).not.toHaveBeenCalled();
-	});
-
-	it("throws when the scan has no userId (anonymous scans unsupported)", async () => {
-		mockGetById.mockResolvedValue({ ...baseScan, userId: null });
-		await expect(processJsonLd(makeJob({ scanId: baseScan.id }))).rejects.toThrow(
-			/anonymous scans are not supported/,
-		);
 		expect(mockGenerateSchemaOrg).not.toHaveBeenCalled();
 	});
 

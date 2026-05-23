@@ -9,19 +9,14 @@ import type { MilestoneType } from "../schema/roi";
  * Tries exact match on websiteUrl against both the original url and the
  * post-redirect finalUrl to handle http→https and www redirects.
  */
-export function findProjectByUserAndUrl(
-	db: DbClient,
-	userId: string,
-	url: string,
-	finalUrl?: string,
-) {
+export function findProjectByUrl(db: DbClient, url: string, finalUrl?: string) {
 	const urlCondition =
 		finalUrl && finalUrl !== url
 			? or(eq(monitoringProjects.websiteUrl, url), eq(monitoringProjects.websiteUrl, finalUrl))
 			: eq(monitoringProjects.websiteUrl, url);
 
 	return db.query.monitoringProjects.findFirst({
-		where: and(eq(monitoringProjects.userId, userId), urlCondition),
+		where: urlCondition,
 		columns: { id: true },
 	});
 }
@@ -204,7 +199,7 @@ export function getRoiReport(db: DbClient, reportId: string) {
 		where: eq(roiReports.id, reportId),
 		with: {
 			project: {
-				columns: { id: true, userId: true, name: true, websiteUrl: true },
+				columns: { id: true, name: true, websiteUrl: true },
 			},
 		},
 	});
@@ -267,17 +262,15 @@ export interface PortfolioDashboardData {
 }
 
 /**
- * Aggregate portfolio dashboard data across all monitoring projects for a user.
- * Returns KPIs, top/bottom performers, timeline, and per-project stats.
+ * Aggregate portfolio dashboard data across all monitoring projects in the
+ * instance. Returns KPIs, top/bottom performers, timeline, per-project stats.
  */
 export async function getPortfolioDashboard(
 	db: DbClient,
-	userId: string,
 	periodDays = 30,
 ): Promise<PortfolioDashboardData> {
-	// 1. Get all monitoring projects for user
+	// 1. Get all monitoring projects in the instance
 	const projects = await db.query.monitoringProjects.findMany({
-		where: eq(monitoringProjects.userId, userId),
 		columns: { id: true, name: true, websiteUrl: true },
 	});
 

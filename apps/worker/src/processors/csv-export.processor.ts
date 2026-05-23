@@ -37,7 +37,6 @@ export async function processCsvExport(
 	try {
 		const bytes = await buildCsv({
 			exportId,
-			userId: exp.userId,
 			entity: exp.entity,
 			columns: exp.columns ?? null,
 			dateFrom: exp.dateFrom,
@@ -51,7 +50,7 @@ export async function processCsvExport(
 		});
 
 		const storage = buildCsvExportStorage();
-		const storageKey = `exports/${exp.userId}/${exportId}.csv`;
+		const storageKey = `exports/${exportId}.csv`;
 		const put = await storage.put(storageKey, bytes, { ttlSeconds: 24 * 60 * 60 });
 
 		await csvExportQueries.updateStatus(db, exportId, "completed", {

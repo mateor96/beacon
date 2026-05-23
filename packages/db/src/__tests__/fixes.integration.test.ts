@@ -128,20 +128,23 @@ describe.skipIf(!DATABASE_URL)("fix generation schema (real Postgres)", () => {
 			"generated_fixes",
 		]);
 
+		// v0.2: user-scoped indexes (idx_generated_fixes_user,
+		// idx_cms_connections_user_active) were dropped when user_id was
+		// removed from feature tables. The remaining instance-scoped indexes
+		// must still exist.
 		const indexes = await sqlClient<{ indexname: string }[]>`
 			SELECT indexname FROM pg_indexes
 			WHERE schemaname = 'public'
 			AND indexname IN (
 				'uq_generated_fixes_scan_type_version',
 				'idx_generated_fixes_scan',
-				'idx_generated_fixes_user',
 				'idx_generated_fixes_fix_type',
 				'idx_generated_fixes_status',
-				'idx_cms_connections_user_active',
+				'idx_cms_connections_active',
 				'idx_deployment_attempts_fix',
 				'idx_fix_validations_deployment'
 			)`;
-		expect(indexes.length).toBe(8);
+		expect(indexes.length).toBe(7);
 	});
 
 	// ── Versioning + soft-delete partial index ──────────────────────────
@@ -317,20 +320,19 @@ describe.skipIf(!DATABASE_URL)("fix generation schema (real Postgres)", () => {
 		expect(credentials).toEqual(SAMPLE_CREDS);
 	});
 
-	it("encryption AAD is bound to row identity (tampering with user_id breaks decrypt)", async () => {
+	it("encryption AAD is bound to row identity (tampering with connection id breaks decrypt)", async () => {
 		await seedUser();
 		const conn = await createCmsConnection(db, {
-			userId: USER_ID,
 			cmsType: "wordpress",
 			siteUrl: "https://example.com",
 			credentials: SAMPLE_CREDS,
 		});
 
 		// Manually fetch the envelope and try to decrypt with a fabricated AAD
-		// that uses a DIFFERENT user id. This simulates an attacker swapping
-		// the row's user_id at the DB layer.
+		// that uses a DIFFERENT connection id. This simulates an attacker
+		// swapping the row's id at the DB layer.
 		const [row] = await db.select().from(cmsConnections).where(eq(cmsConnections.id, conn.id));
-		const fakeAad = cmsCredentialsAad(row.id, "99999999-9999-4999-a999-999999999999");
+		const fakeAad = cmsCredentialsAad("99999999-9999-4999-a999-999999999999");
 		expect(() =>
 			decryptCmsCredentials({
 				envelope: row.encryptedCredentials as string,

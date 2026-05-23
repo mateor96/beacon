@@ -19,12 +19,6 @@ export async function processJsonLd(
 	if (!scan.htmlContent) {
 		throw new Error(`Scan ${scanId} has no htmlContent`);
 	}
-	if (!scan.userId) {
-		throw new Error(
-			`Scan ${scanId} has no userId — anonymous scans are not supported for JSON-LD generation`,
-		);
-	}
-
 	const checks = (scan.checks ?? []) as SchemaOrgCheckSummary[];
 	const schemaOrgCheck = checks.find((c) => c.id === "schema-org");
 
@@ -35,7 +29,6 @@ export async function processJsonLd(
 	const result = await generateSchemaOrg(
 		{
 			scanId,
-			userId: scan.userId,
 			finalUrl,
 			htmlContent: scan.htmlContent,
 			schemaOrgCheck,

@@ -15,9 +15,8 @@ export function getById(db: DbClient, id: string) {
 	return db.query.csvExports.findFirst({ where: eq(csvExports.id, id) });
 }
 
-export function listForUser(db: DbClient, userId: string, limit = 20) {
+export function listAll(db: DbClient, limit = 20) {
 	return db.query.csvExports.findMany({
-		where: eq(csvExports.userId, userId),
 		orderBy: desc(csvExports.createdAt),
 		limit,
 	});

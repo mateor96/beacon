@@ -84,14 +84,12 @@ describe("processLlmsTxt", () => {
 		expect(mockGenerateLlmsTxt).toHaveBeenCalledTimes(1);
 		const call = mockGenerateLlmsTxt.mock.calls[0]?.[0] as {
 			scanId: string;
-			userId: string;
 			finalUrl: string;
 			htmlContent: string;
 			llmsCheck: { id: string };
 			force?: boolean;
 		};
 		expect(call.scanId).toBe(baseScan.id);
-		expect(call.userId).toBe(baseScan.userId);
 		// Review P1 #5: must use finalUrl when present
 		expect(call.finalUrl).toBe(baseScan.finalUrl);
 		expect(call.htmlContent).toBe(baseScan.htmlContent);
@@ -145,14 +143,6 @@ describe("processLlmsTxt", () => {
 		mockGetById.mockResolvedValue({ ...baseScan, htmlContent: null });
 		await expect(processLlmsTxt(makeJob({ scanId: baseScan.id }))).rejects.toThrow(
 			/no htmlContent/,
-		);
-		expect(mockGenerateLlmsTxt).not.toHaveBeenCalled();
-	});
-
-	it("throws when the scan has no userId (anonymous scans unsupported)", async () => {
-		mockGetById.mockResolvedValue({ ...baseScan, userId: null });
-		await expect(processLlmsTxt(makeJob({ scanId: baseScan.id }))).rejects.toThrow(
-			/anonymous scans are not supported/,
 		);
 		expect(mockGenerateLlmsTxt).not.toHaveBeenCalled();
 	});

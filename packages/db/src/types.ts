@@ -9,7 +9,6 @@ import type {
 } from "./schema/ai-visibility";
 import type { alertEvents, alerts } from "./schema/alerts";
 import type { anonymousScans } from "./schema/anonymous-scans";
-import type { apiKeys } from "./schema/api-keys";
 import type { benchmarkGroups } from "./schema/benchmarks";
 import type { competitors } from "./schema/competitors";
 import type { siteCrawlPages, siteCrawls } from "./schema/crawls";
@@ -74,10 +73,6 @@ export type NewAlert = InferInsertModel<typeof alerts>;
 
 export type AlertEvent = InferSelectModel<typeof alertEvents>;
 export type NewAlertEvent = InferInsertModel<typeof alertEvents>;
-
-// API Keys
-export type ApiKey = InferSelectModel<typeof apiKeys>;
-export type NewApiKey = InferInsertModel<typeof apiKeys>;
 
 // Waitlist
 export type WaitlistSignup = InferSelectModel<typeof waitlistSignups>;

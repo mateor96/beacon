@@ -424,39 +424,11 @@ export async function processAiVisibility(
 		usedHardcodedDefault: localePrompt.usedHardcodedDefault,
 	});
 
-	// Alert evaluation: check alert rules after monitoring cycle (#286)
-	try {
-		const { processAlertsForProject } = await import("@beacon/monitoring");
-		const { profileQueries: alertPq } = await import("@beacon/db");
-		const billingProject = await monitoringQueries.getProjectById(db, projectId);
-		if (billingProject) {
-			const alertProfile = await alertPq.getById(db, billingProject.userId);
-			if (alertProfile?.email) {
-				const alertResult = await processAlertsForProject(db, {
-					projectId,
-					brandName,
-					projectName: billingProject.name ?? billingProject.websiteUrl ?? brandName,
-					userId: billingProject.userId,
-					userEmail: alertProfile.email,
-					currentMentionCount: mentionCount ?? 0,
-					previousMentionCount: 0,
-					currentAvgRank: null,
-					previousAvgRank: null,
-					newCitationCount: mentionCount ?? 0,
-				});
-				if (alertResult.fired > 0) {
-					log.info("Alerts fired", {
-						fired: alertResult.fired,
-						cooledDown: alertResult.cooledDown,
-					});
-				}
-			}
-		}
-	} catch (alertErr) {
-		log.warn("Alert evaluation failed", {
-			error: alertErr instanceof Error ? alertErr.message : String(alertErr),
-		});
-	}
+	// Alert evaluation was per-user (operator email), wired through the
+	// archived auth layer. In single-tenant OSS mode the operator-email
+	// pathway is rebuilt in #8 (cron + monitoring email reactivation).
+	// Until then we skip the dispatch — alert rules still record in the DB
+	// but no email/webhook is sent.
 
 	return {
 		projectId,

@@ -1,13 +1,9 @@
 import { relations, sql } from "drizzle-orm";
 import { boolean, index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { competitors } from "./competitors";
-import { profiles } from "./profiles";
 
 export const monitoringProjects = pgTable("monitoring_projects", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	userId: uuid("user_id")
-		.references(() => profiles.id, { onDelete: "cascade" })
-		.notNull(),
 	name: text("name").notNull(),
 	websiteUrl: text("website_url").notNull(),
 	brandKeywords: text("brand_keywords").array().notNull(),
@@ -78,11 +74,7 @@ export const monitoringSchedules = pgTable(
 );
 
 // Relations
-export const monitoringProjectsRelations = relations(monitoringProjects, ({ one, many }) => ({
-	user: one(profiles, {
-		fields: [monitoringProjects.userId],
-		references: [profiles.id],
-	}),
+export const monitoringProjectsRelations = relations(monitoringProjects, ({ many }) => ({
 	prompts: many(monitoringPrompts),
 	schedules: many(monitoringSchedules),
 	competitors: many(competitors),

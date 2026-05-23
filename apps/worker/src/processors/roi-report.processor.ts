@@ -191,44 +191,9 @@ export async function processRoiReport(
 		pageCount: pdfResult.pageCount,
 	});
 
-	// Send roi-report-ready notification email (non-critical)
-	try {
-		const project = await monitoringQueries.getProjectById(db, projectId);
-		if (project?.userId) {
-			const profile = await profileQueries.getById(db, project.userId);
-			if (profile?.email) {
-				const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.example.com";
-				const { templates, mintUnsubscribeToken } = await import("@beacon/notifications");
-				const unsubscribeToken = mintUnsubscribeToken(project.userId, "report");
-				const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?token=${unsubscribeToken}`;
-				const rendered = templates["roi-report-ready"](
-					{
-						projectName: project.name ?? projectId,
-						currentScore: latest.overallScore,
-						baselineScore: baseline.overallScore,
-						scoreDelta,
-						reportUrl: `${appUrl}/dashboard/${projectId}/roi/reports/${reportRow.id}`,
-					},
-					unsubscribeUrl,
-				);
-
-				const { addJob: enqueue } = await import("@beacon/queue");
-				await enqueue("email", {
-					emailLogId: `roi-report-${reportRow.id}`,
-					to: [profile.email],
-					from: process.env.EMAIL_FROM ?? "noreply@example.com",
-					subject: rendered.subject,
-					html: rendered.html,
-					text: rendered.text,
-				});
-				log.info("ROI report-ready email enqueued", { reportId: reportRow.id });
-			}
-		}
-	} catch (emailErr) {
-		log.error("Failed to send roi-report-ready email", emailErr, {
-			reportId: reportRow.id,
-		});
-	}
+	// ROI report-ready notification was per-user via the archived auth layer.
+	// In single-tenant OSS mode the operator-email pathway is rebuilt in
+	// #13 (ROI report UI trigger + email integration).
 
 	return {
 		reportId: reportRow.id,

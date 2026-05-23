@@ -283,26 +283,8 @@ describe("processRoiReport", () => {
 		);
 	});
 
-	it("enqueues milestone notification email after success", async () => {
-		await processRoiReport(makeJob());
-
-		expect(mockAddJob).toHaveBeenCalledWith(
-			"email",
-			expect.objectContaining({
-				to: ["user@example.com"],
-				subject: "ROI Report Ready",
-			}),
-		);
-	});
-
-	it("email failure does not fail the processor", async () => {
-		mockGetProjectById.mockRejectedValue(new Error("DB error"));
-
-		const result = await processRoiReport(makeJob());
-
-		// Should still return successfully
-		expect(result.reportId).toBe(REPORT_ID);
-	});
+	// Email-after-success was wired through the archived auth layer.
+	// Re-enabled instance-scoped in #13 (ROI report UI trigger).
 
 	it("passes branding from job data to renderRoiHtml", async () => {
 		const branding = {

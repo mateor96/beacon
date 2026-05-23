@@ -41,7 +41,6 @@ export interface LlmsCheckSummary {
 
 export interface GenerateLlmsTxtInput {
 	scanId: string;
-	userId: string;
 	finalUrl: string;
 	htmlContent: string;
 	/** The scanner's llms-txt check result, if available. */
@@ -320,7 +319,6 @@ export async function generateLlmsTxt(
 
 	const { id, version } = await fixQueries.createGeneratedFix(db, {
 		scanId: input.scanId,
-		userId: input.userId,
 		fixType: "llms_txt",
 		content,
 		contentHash,

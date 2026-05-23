@@ -50,7 +50,6 @@ export interface RobotsTxtCheckSummary {
 
 export interface GenerateAgentsMdInput {
 	scanId: string;
-	userId: string;
 	finalUrl: string;
 	htmlContent: string;
 	agentsMdCheck?: AgentsMdCheckSummary;
@@ -366,7 +365,6 @@ export async function generateAgentsMd(
 
 	const { id, version } = await fixQueries.createGeneratedFix(db, {
 		scanId: input.scanId,
-		userId: input.userId,
 		fixType: "agents_md",
 		content,
 		contentHash,
