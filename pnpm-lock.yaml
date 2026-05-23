@@ -44,6 +44,9 @@ importers:
       '@beacon/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@beacon/api-sdk':
+        specifier: workspace:*
+        version: link:../../packages/api-sdk
       '@beacon/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -71,6 +74,9 @@ importers:
       '@scalar/api-reference-react':
         specifier: ^0.9.22
         version: 0.9.22(react@19.2.4)(tailwindcss@4.2.1)(typescript@5.9.3)
+      drizzle-orm:
+        specifier: ^0.38.3
+        version: 0.38.4(@opentelemetry/api@1.9.1)(@types/react@19.2.14)(postgres@3.4.8)(react@19.2.4)
       ioredis:
         specifier: ^5.10.0
         version: 5.10.0
@@ -83,6 +89,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.0.6

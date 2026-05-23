@@ -157,6 +157,15 @@ export function cmsCredentialsAad(connectionId: string): string {
 }
 
 /**
+ * AAD helper for webhook endpoint secrets. Different prefix from
+ * cmsCredentialsAad so encrypted-secret swaps between the two surfaces
+ * fail the auth-tag check.
+ */
+export function webhookSecretAad(endpointId: string): string {
+	return `webhook_endpoint:${endpointId}`;
+}
+
+/**
  * Test-only: clear the in-memory key cache between tests that mutate
  * `process.env.CMS_CREDENTIALS_KEY`. Not part of the public runtime API.
  */
