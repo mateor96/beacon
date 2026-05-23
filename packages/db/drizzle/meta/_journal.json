@@ -288,6 +288,13 @@
 			"when": 1779852400000,
 			"tag": "0040_drop_billing_columns",
 			"breakpoints": true
+		},
+		{
+			"idx": 41,
+			"version": "7",
+			"when": 1779853500000,
+			"tag": "0042_profiles_oss_columns",
+			"breakpoints": true
 		}
 	]
 }
