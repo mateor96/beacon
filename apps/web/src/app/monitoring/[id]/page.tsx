@@ -1,5 +1,6 @@
 import { DeleteProjectButton } from "@/components/monitoring/delete-project-button";
-import { aiVisibilityQueries, db, monitoringQueries } from "@beacon/db";
+import { RoiReportTrigger } from "@/components/monitoring/roi-report-trigger";
+import { aiVisibilityQueries, db, monitoringQueries, roiQueries } from "@beacon/db";
 import { UuidSchema } from "@beacon/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,6 +24,7 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 	if (!project) notFound();
 
 	const snapshots = await aiVisibilityQueries.getSnapshotsByProjectId(db, id, { limit: 20 });
+	const roiReports = await roiQueries.getReportsForProject(db, id);
 
 	return (
 		<main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -76,6 +78,40 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 						<p className="mt-2 text-sm text-text-muted">Keine Wettbewerber registriert.</p>
 					)}
 				</div>
+			</section>
+
+			<section className="mb-8">
+				<div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+					<h2 className="text-xl font-semibold text-text">ROI-Reports</h2>
+					<RoiReportTrigger projectId={id} />
+				</div>
+				{roiReports.length === 0 ? (
+					<p className="rounded-lg border border-border bg-surface p-6 text-text-muted">
+						Noch keine ROI-Reports. Klicke "Report erstellen" oben — der Worker rendert das PDF im
+						Hintergrund.
+					</p>
+				) : (
+					<ul className="divide-y divide-border rounded-lg border border-border bg-white">
+						{roiReports.map((r) => (
+							<li key={r.id} className="flex items-center justify-between px-4 py-3 text-sm">
+								<div>
+									<div className="font-medium text-text">
+										{new Date(r.createdAt).toLocaleString("de-DE")}
+									</div>
+									<div className="text-xs text-text-muted">
+										Format: {r.format} · ID {r.id.slice(0, 8)}
+									</div>
+								</div>
+								<a
+									href={`/api/monitoring/projects/${id}/roi-report/${r.id}?format=pdf`}
+									className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text transition-colors hover:bg-primary hover:text-text-inverse"
+								>
+									PDF herunterladen
+								</a>
+							</li>
+						))}
+					</ul>
+				)}
 			</section>
 
 			<section>
