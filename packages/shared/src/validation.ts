@@ -136,6 +136,20 @@ export const ComparisonRequestSchema = z.object({
 
 export type ComparisonRequest = z.infer<typeof ComparisonRequestSchema>;
 
+// ── Monitoring Projects (v0.2 instance-scoped) ──────────────
+
+export const MonitoringProjectCreateSchema = z.object({
+	name: z.string().trim().min(1, "Name ist erforderlich").max(200),
+	websiteUrl: UrlSchema,
+	brandKeywords: z
+		.array(z.string().trim().min(1).max(100))
+		.min(1, "Mindestens ein Brand-Keyword ist erforderlich")
+		.max(20, "Maximal 20 Brand-Keywords"),
+	competitorKeywords: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
+});
+
+export type MonitoringProjectCreateInput = z.infer<typeof MonitoringProjectCreateSchema>;
+
 // ── Disposable Email Detection ──────────────────────────────
 
 const DISPOSABLE_DOMAIN_SET = new Set<string>(disposableDomains);

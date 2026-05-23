@@ -12,6 +12,7 @@ export const monitoringProjects = pgTable("monitoring_projects", {
 	updatedAt: timestamp("updated_at", { withTimezone: true })
 		.defaultNow()
 		.$onUpdateFn(() => new Date()),
+	deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export const monitoringPrompts = pgTable("monitoring_prompts", {

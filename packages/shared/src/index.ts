@@ -94,6 +94,7 @@ export {
 	CreateShopifyConnectionSchema,
 	CreateCmsConnectionSchema,
 	DeployRequestSchema,
+	MonitoringProjectCreateSchema,
 } from "./validation.js";
 export type {
 	ValidUrl,
@@ -111,6 +112,7 @@ export type {
 	SentimentOverrideRequest,
 	CreateCmsConnectionRequest,
 	DeployRequest,
+	MonitoringProjectCreateInput,
 } from "./validation.js";
 
 // Deployment state machine (#291)

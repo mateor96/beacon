@@ -1,0 +1,122 @@
+import { DeleteProjectButton } from "@/components/monitoring/delete-project-button";
+import { aiVisibilityQueries, db, monitoringQueries } from "@beacon/db";
+import { UuidSchema } from "@beacon/shared";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+	robots: { index: false, follow: false },
+};
+
+interface Props {
+	params: Promise<{ id: string }>;
+}
+
+export default async function MonitoringProjectDetailPage({ params }: Props) {
+	const { id } = await params;
+	const idCheck = UuidSchema.safeParse(id);
+	if (!idCheck.success) notFound();
+
+	const project = await monitoringQueries.getProjectById(db, id);
+	if (!project) notFound();
+
+	const snapshots = await aiVisibilityQueries.getSnapshotsByProjectId(db, id, { limit: 20 });
+
+	return (
+		<main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+			<div className="mb-2">
+				<Link href="/monitoring" className="text-sm text-primary hover:underline">
+					&larr; Alle Projekte
+				</Link>
+			</div>
+
+			<div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+				<div>
+					<h1 className="text-3xl font-bold text-text">{project.name}</h1>
+					<a
+						href={project.websiteUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-text-muted hover:text-primary"
+					>
+						{project.websiteUrl}
+					</a>
+				</div>
+				<DeleteProjectButton id={project.id} name={project.name} />
+			</div>
+
+			<section className="mb-8 grid gap-4 sm:grid-cols-2">
+				<div className="rounded-lg border border-border bg-surface p-4">
+					<h2 className="text-sm font-medium uppercase tracking-wide text-text-muted">
+						Brand-Keywords
+					</h2>
+					<ul className="mt-2 flex flex-wrap gap-2">
+						{project.brandKeywords.map((k) => (
+							<li key={k} className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+								{k}
+							</li>
+						))}
+					</ul>
+				</div>
+				<div className="rounded-lg border border-border bg-surface p-4">
+					<h2 className="text-sm font-medium uppercase tracking-wide text-text-muted">
+						Wettbewerber
+					</h2>
+					{project.competitorKeywords && project.competitorKeywords.length > 0 ? (
+						<ul className="mt-2 flex flex-wrap gap-2">
+							{project.competitorKeywords.map((k) => (
+								<li key={k} className="rounded-full bg-border/40 px-3 py-1 text-sm text-text-muted">
+									{k}
+								</li>
+							))}
+						</ul>
+					) : (
+						<p className="mt-2 text-sm text-text-muted">Keine Wettbewerber registriert.</p>
+					)}
+				</div>
+			</section>
+
+			<section>
+				<h2 className="mb-3 text-xl font-semibold text-text">Letzte Snapshots</h2>
+				{snapshots.length === 0 ? (
+					<p className="rounded-lg border border-border bg-surface p-6 text-text-muted">
+						Noch keine Snapshots. Der erste AI-Visibility-Job läuft im Hintergrund.
+					</p>
+				) : (
+					<div className="overflow-x-auto rounded-lg border border-border">
+						<table className="w-full text-sm">
+							<thead className="bg-surface text-left text-text-muted">
+								<tr>
+									<th className="px-4 py-2 font-medium">Engine</th>
+									<th className="px-4 py-2 font-medium">Brand</th>
+									<th className="px-4 py-2 font-medium">Query</th>
+									<th className="px-4 py-2 font-medium">Wann</th>
+									<th className="px-4 py-2 text-right font-medium">Kosten</th>
+								</tr>
+							</thead>
+							<tbody className="divide-y divide-border bg-white">
+								{snapshots.map((s) => (
+									<tr key={s.id}>
+										<td className="px-4 py-2 font-medium text-text">{s.aiEngine}</td>
+										<td className="px-4 py-2 text-text-muted">{s.brandName}</td>
+										<td className="px-4 py-2 text-text-muted">
+											<span className="line-clamp-1">{s.queryText}</span>
+										</td>
+										<td className="px-4 py-2 text-text-muted">
+											{new Date(s.queriedAt).toLocaleString("de-DE")}
+										</td>
+										<td className="px-4 py-2 text-right text-text-muted">
+											{s.costCents != null ? `${(s.costCents / 100).toFixed(3)} $` : "—"}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				)}
+			</section>
+		</main>
+	);
+}

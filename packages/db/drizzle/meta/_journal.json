@@ -302,6 +302,13 @@
 			"when": 1779854000000,
 			"tag": "0043_drop_userid_feature_tables",
 			"breakpoints": true
+		},
+		{
+			"idx": 43,
+			"version": "7",
+			"when": 1779854500000,
+			"tag": "0044_monitoring_projects_soft_delete",
+			"breakpoints": true
 		}
 	]
 }
