@@ -11,14 +11,13 @@ export interface ExporterConfig {
 	/** Allowed columns (for validation). */
 	allowedColumns: string[];
 	/**
-	 * Pulls rows in chunks and yields them one by one. Implementations are
-	 * responsible for tenant filtering (userId).
+	 * Pulls rows in chunks and yields them one by one. Implementations stream
+	 * all rows in the instance (Beacon runs single-tenant in OSS mode).
 	 */
 	stream(opts: StreamOptions): AsyncGenerator<Record<string, unknown>>;
 }
 
 export interface StreamOptions {
-	userId: string;
 	dateFrom: Date | null;
 	dateTo: Date | null;
 }
@@ -42,11 +41,8 @@ const scansExporter: ExporterConfig = {
 	entity: "scans",
 	defaultColumns: SCANS_DEFAULT_COLUMNS,
 	allowedColumns: SCANS_ALLOWED_COLUMNS,
-	async *stream({ userId, dateFrom, dateTo }) {
-		const conds = [eq(scans.userId, userId)];
-		if (dateFrom) conds.push(asc(scans.scannedAt)); // placeholder — use gte in real query
+	async *stream({ dateFrom, dateTo }) {
 		const query = db.query.scans.findMany({
-			where: eq(scans.userId, userId),
 			orderBy: asc(scans.scannedAt),
 			limit: 1000,
 		});
@@ -99,7 +95,6 @@ export const EXPORTERS: Record<CsvExportEntity, ExporterConfig> = {
 
 export interface BuildCsvOptions {
 	exportId: string;
-	userId: string;
 	entity: CsvExportEntity;
 	columns: string[] | null;
 	dateFrom: Date | null;
@@ -126,7 +121,6 @@ export async function buildCsv(opts: BuildCsvOptions): Promise<Uint8Array> {
 	let rowCount = 0;
 
 	for await (const row of exporter.stream({
-		userId: opts.userId,
 		dateFrom: opts.dateFrom,
 		dateTo: opts.dateTo,
 	})) {

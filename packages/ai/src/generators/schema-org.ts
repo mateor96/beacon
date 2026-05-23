@@ -41,7 +41,6 @@ export interface SchemaOrgCheckSummary {
 
 export interface GenerateSchemaOrgInput {
 	scanId: string;
-	userId: string;
 	finalUrl: string;
 	htmlContent: string;
 	schemaOrgCheck?: SchemaOrgCheckSummary;
@@ -392,7 +391,6 @@ export async function generateSchemaOrg(
 
 	const { id, version } = await fixQueries.createGeneratedFix(db, {
 		scanId: input.scanId,
-		userId: input.userId,
 		fixType: "json_ld",
 		content,
 		contentHash,

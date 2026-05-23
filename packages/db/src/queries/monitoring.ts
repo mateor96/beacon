@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, desc, eq, lte } from "drizzle-orm";
 import type { DbClient } from "../client";
 import {
 	monitoringProjects,
@@ -30,19 +30,14 @@ export function getProjectById(db: DbClient, id: string) {
 	});
 }
 
-export function getProjectsByUserId(db: DbClient, userId: string) {
-	return db.query.monitoringProjects.findMany({
-		where: eq(monitoringProjects.userId, userId),
-		with: { prompts: true, schedules: true },
-	});
-}
-
 /**
- * List every monitoring project in the system. Used by system-wide cron
- * jobs (e.g. reddit-discovery) that iterate all brands.
+ * List every monitoring project in the system. Beacon runs single-tenant,
+ * so every caller wants all projects.
  */
 export function listAllProjects(db: DbClient) {
-	return db.query.monitoringProjects.findMany();
+	return db.query.monitoringProjects.findMany({
+		with: { prompts: true, schedules: true },
+	});
 }
 
 export function deleteProject(db: DbClient, id: string) {
@@ -147,35 +142,4 @@ export function deleteSchedule(db: DbClient, id: string) {
 		.where(eq(monitoringSchedules.id, id))
 		.returning()
 		.then((rows) => rows[0]);
-}
-
-// ─── Billing usage counting (#270) ──────────────────────────
-
-/**
- * Count monitoring projects owned by a user.
- * Used to enforce monitoringProjects plan limit.
- */
-export async function countProjectsByUserId(db: DbClient, userId: string): Promise<number> {
-	const rows = await db
-		.select({ count: sql<number>`count(*)::int` })
-		.from(monitoringProjects)
-		.where(eq(monitoringProjects.userId, userId));
-	return rows[0]?.count ?? 0;
-}
-
-/**
- * Count monitoring prompts created by a user since a given date.
- * Used to enforce monitoringPrompts plan limit per billing period.
- */
-export async function countPromptsForUserInPeriod(
-	db: DbClient,
-	userId: string,
-	since: Date,
-): Promise<number> {
-	const rows = await db
-		.select({ count: sql<number>`count(*)::int` })
-		.from(monitoringPrompts)
-		.innerJoin(monitoringProjects, eq(monitoringPrompts.projectId, monitoringProjects.id))
-		.where(and(eq(monitoringProjects.userId, userId), gte(monitoringPrompts.createdAt, since)));
-	return rows[0]?.count ?? 0;
 }

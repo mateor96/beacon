@@ -24,12 +24,6 @@ export async function processAgentsMd(
 	if (!scan.htmlContent) {
 		throw new Error(`Scan ${scanId} has no htmlContent`);
 	}
-	if (!scan.userId) {
-		throw new Error(
-			`Scan ${scanId} has no userId — anonymous scans are not supported for AGENTS.md generation`,
-		);
-	}
-
 	const checks = (scan.checks ?? []) as Array<AgentsMdCheckSummary | RobotsTxtCheckSummary>;
 	const agentsMdCheck = checks.find((c) => c.id === "agents-md") as
 		| AgentsMdCheckSummary
@@ -45,7 +39,6 @@ export async function processAgentsMd(
 	const result = await generateAgentsMd(
 		{
 			scanId,
-			userId: scan.userId,
 			finalUrl,
 			htmlContent: scan.htmlContent,
 			agentsMdCheck,
