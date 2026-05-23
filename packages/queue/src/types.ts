@@ -242,6 +242,22 @@ export interface CitationExtractionJobResult {
 	skippedAsIdempotent: boolean;
 }
 
+export interface WebhookDeliveryJobData {
+	deliveryId: string;
+	endpointId: string;
+	endpointUrl: string;
+	encryptedSecret: string;
+	eventType: string;
+	payload: string;
+	idempotencyKey: string;
+}
+
+export interface WebhookDeliveryJobResult {
+	deliveryId: string;
+	status: "success" | "failed" | "dead_letter";
+	responseStatus: number | null;
+}
+
 // ── Type Maps ───────────────────────────────────────────────
 
 export interface JobDataMap {
@@ -261,6 +277,7 @@ export interface JobDataMap {
 	"validate-deployment": ValidateDeploymentJobData;
 	"citation-extraction": CitationExtractionJobData;
 	"csv-export": CsvExportJobData;
+	"webhook-delivery": WebhookDeliveryJobData;
 }
 
 export interface JobResultMap {
@@ -280,6 +297,7 @@ export interface JobResultMap {
 	"validate-deployment": ValidateDeploymentJobResult;
 	"citation-extraction": CitationExtractionJobResult;
 	"csv-export": CsvExportJobResult;
+	"webhook-delivery": WebhookDeliveryJobResult;
 }
 
 export type QueueName = keyof JobDataMap;

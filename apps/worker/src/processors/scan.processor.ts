@@ -88,6 +88,28 @@ export async function processScan(job: Job<ScanJobData, ScanJobResult>): Promise
 			durationMs,
 		});
 
+		// Fan out scan.completed webhook event to subscribed instance-scoped
+		// endpoints. Failure here must not fail the scan; we only log.
+		try {
+			const { dispatchWebhookEvent } = await import("@beacon/api-sdk");
+			const fired = await dispatchWebhookEvent("scan.completed", {
+				scanId,
+				url: job.data.url,
+				finalUrl: result.finalUrl ?? null,
+				overallScore: result.overallScore,
+				readinessLevel: result.readinessLevel,
+				levelScores: result.levelScores,
+				scannedAt: new Date().toISOString(),
+			});
+			if (fired.length > 0) {
+				log.info("Fired scan.completed webhook(s)", { count: fired.length });
+			}
+		} catch (whErr) {
+			log.warn("Webhook dispatch failed (non-fatal)", {
+				error: whErr instanceof Error ? whErr.message : String(whErr),
+			});
+		}
+
 		return {
 			scanId,
 			overallScore: result.overallScore,

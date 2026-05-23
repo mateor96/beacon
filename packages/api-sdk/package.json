@@ -16,6 +16,8 @@
 		"clean": "rm -rf dist"
 	},
 	"dependencies": {
+		"@beacon/db": "workspace:*",
+		"@beacon/queue": "workspace:*",
 		"@beacon/shared": "workspace:*",
 		"zod": "^3.23.0"
 	},

@@ -120,6 +120,9 @@ importers:
       '@beacon/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@beacon/api-sdk':
+        specifier: workspace:*
+        version: link:../../packages/api-sdk
       '@beacon/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -209,6 +212,12 @@ importers:
 
   packages/api-sdk:
     dependencies:
+      '@beacon/db':
+        specifier: workspace:*
+        version: link:../db
+      '@beacon/queue':
+        specifier: workspace:*
+        version: link:../queue
       '@beacon/shared':
         specifier: workspace:*
         version: link:../shared

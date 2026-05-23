@@ -79,6 +79,7 @@ describe("GET /health", () => {
 			"validate-deployment",
 			"citation-extraction",
 			"csv-export",
+			"webhook-delivery",
 		]);
 	});
 

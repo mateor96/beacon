@@ -31,6 +31,8 @@ export type {
 	CitationExtractionJobResult,
 	CsvExportJobData,
 	CsvExportJobResult,
+	WebhookDeliveryJobData,
+	WebhookDeliveryJobResult,
 	JobDataMap,
 	JobResultMap,
 	QueueName,

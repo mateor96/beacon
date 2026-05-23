@@ -72,6 +72,26 @@ export async function deleteById(db: DbClient, endpointId: string): Promise<void
 	await db.delete(webhookEndpoints).where(eq(webhookEndpoints.id, endpointId));
 }
 
+/**
+ * Return all active endpoints that are subscribed to the given event type.
+ * Used by the dispatcher to fan an event out across the instance.
+ */
+export async function getActiveEndpointsForEvent(
+	db: DbClient,
+	eventType: string,
+): Promise<(typeof webhookEndpoints.$inferSelect)[]> {
+	const rows = await db
+		.select()
+		.from(webhookEndpoints)
+		.where(
+			and(
+				eq(webhookEndpoints.active, true),
+				sql`${webhookEndpoints.events} @> ${JSON.stringify([eventType])}::jsonb`,
+			),
+		);
+	return rows;
+}
+
 // ─── webhook_deliveries ─────────────────────────────────────────────────
 
 export interface CreateWebhookDeliveryInput {
@@ -103,6 +123,20 @@ export async function createDelivery(
 	const row = inserted[0];
 	if (!row) throw new Error("createWebhookDelivery: insert returned no rows");
 	return row;
+}
+
+export async function updateDeliveryStatus(
+	db: DbClient,
+	deliveryId: string,
+	status: WebhookDeliveryStatus,
+	responseStatus: number | null,
+	responseBody: string | null,
+	attempts: number,
+): Promise<void> {
+	await db
+		.update(webhookDeliveries)
+		.set({ status, responseStatus, responseBody, attempts })
+		.where(eq(webhookDeliveries.id, deliveryId));
 }
 
 export async function listDeliveries(

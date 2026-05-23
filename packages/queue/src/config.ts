@@ -33,6 +33,7 @@ export const QUEUE_NAMES = [
 	"validate-deployment",
 	"citation-extraction",
 	"csv-export",
+	"webhook-delivery",
 ] as const satisfies readonly QueueName[];
 
 export const QUEUE_PREFIX = "beacon";
@@ -208,6 +209,19 @@ export const QUEUE_CONFIG: Record<QueueName, QueueConfig> = {
 		defaultJobOptions: {
 			attempts: 2,
 			backoff: { type: "exponential", delay: 10_000 },
+			removeOnComplete: { age: 86_400 },
+			removeOnFail: { age: 604_800 },
+		},
+	},
+	"webhook-delivery": {
+		concurrency: 5,
+		// 5 attempts with exponential backoff: 2s, 4s, 8s, 16s, 32s.
+		// After the 5th attempt the job is dead-lettered and the
+		// delivery row is marked "dead_letter". Long retention so
+		// operators can inspect delivery failures post-mortem.
+		defaultJobOptions: {
+			attempts: 5,
+			backoff: { type: "exponential", delay: 2_000 },
 			removeOnComplete: { age: 86_400 },
 			removeOnFail: { age: 604_800 },
 		},
