@@ -101,6 +101,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build workspace dependencies
+        # @beacon/db integration tests import @beacon/shared/crypto-aes-gcm
+        # which resolves via the package's `exports` field to dist/. The dist
+        # needs to exist before vitest runs.
+        run: pnpm --filter @beacon/shared build
+
       - name: Run DB integration tests
         run: pnpm --filter @beacon/db test:integration
 

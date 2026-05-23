@@ -241,6 +241,9 @@ importers:
       '@beacon/db':
         specifier: workspace:*
         version: link:../db
+      '@beacon/queue':
+        specifier: workspace:*
+        version: link:../queue
       '@beacon/shared':
         specifier: workspace:*
         version: link:../shared
