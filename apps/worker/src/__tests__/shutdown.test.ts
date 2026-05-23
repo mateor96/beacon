@@ -116,13 +116,13 @@ describe("Shutdown behavior", () => {
 	it("startWorkers returns a PromiseTracker for DLQ writes", () => {
 		const result = startWorkers();
 		expect(result.pendingDlqWrites).toBeInstanceOf(PromiseTracker);
-		expect(result.workers).toHaveLength(16);
+		expect(result.workers).toHaveLength(17);
 	});
 
 	it("stopWorkers closes all workers", async () => {
 		startWorkers();
 		await stopWorkers();
-		expect(mockWorkerClose).toHaveBeenCalledTimes(16);
+		expect(mockWorkerClose).toHaveBeenCalledTimes(17);
 	});
 
 	it("stopWorkers with force=true passes true to worker.close", async () => {
@@ -159,6 +159,6 @@ describe("Shutdown behavior", () => {
 	it("registers stalled event handler on all workers", () => {
 		startWorkers();
 		const stalledCalls = mockWorkerOn.mock.calls.filter((c: unknown[]) => c[0] === "stalled");
-		expect(stalledCalls).toHaveLength(16);
+		expect(stalledCalls).toHaveLength(17);
 	});
 });

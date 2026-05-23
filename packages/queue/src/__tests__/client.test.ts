@@ -58,9 +58,9 @@ describe("getQueues", () => {
 		closeAllQueues();
 	});
 
-	it("creates exactly 16 queues", () => {
+	it("creates exactly 17 queues", () => {
 		const queues = getQueues();
-		expect(Object.keys(queues)).toHaveLength(16);
+		expect(Object.keys(queues)).toHaveLength(17);
 		expect(Object.keys(queues)).toEqual([
 			"scan",
 			"fix",
@@ -78,6 +78,7 @@ describe("getQueues", () => {
 			"validate-deployment",
 			"citation-extraction",
 			"csv-export",
+			"webhook-delivery",
 		]);
 	});
 

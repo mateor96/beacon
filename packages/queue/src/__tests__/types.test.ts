@@ -21,6 +21,7 @@ describe("QUEUE_NAMES", () => {
 			"validate-deployment",
 			"citation-extraction",
 			"csv-export",
+			"webhook-delivery",
 		]);
 	});
 });
@@ -79,7 +80,12 @@ describe("QUEUE_CONFIG retention defaults", () => {
 	// email, validate-deployment, and csv-export have user-visible artifacts
 	// or long post-mortem windows that benefit from longer retention;
 	// everything else uses the default bucket.
-	const LONG_RETENTION = new Set(["email", "validate-deployment", "csv-export"]);
+	const LONG_RETENTION = new Set([
+		"email",
+		"validate-deployment",
+		"csv-export",
+		"webhook-delivery",
+	]);
 
 	it("removeOnComplete is 3600s (1h) for standard queues and 86400s (24h) for long-retention queues", () => {
 		for (const name of QUEUE_NAMES) {

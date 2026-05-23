@@ -12,7 +12,7 @@ import {
 
 // ─── Enums (text + const arrays; repo convention, no pgEnum) ─────────────
 
-export const WEBHOOK_DELIVERY_STATUSES = ["pending", "delivered", "failed"] as const;
+export const WEBHOOK_DELIVERY_STATUSES = ["pending", "delivered", "failed", "dead_letter"] as const;
 export type WebhookDeliveryStatus = (typeof WEBHOOK_DELIVERY_STATUSES)[number];
 
 // ─── webhook_endpoints ──────────────────────────────────────────────────

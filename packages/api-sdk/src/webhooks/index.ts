@@ -1,5 +1,6 @@
 export { WebhookEnvelopeSchema, type WebhookEnvelope } from "./envelope.js";
 export { signWebhookPayload, verifyWebhookSignature } from "./hmac.js";
+export { dispatchWebhookEvent } from "./dispatch.js";
 
 export {
 	WEBHOOK_EVENTS,

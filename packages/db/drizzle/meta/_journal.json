@@ -309,6 +309,13 @@
 			"when": 1779854500000,
 			"tag": "0044_monitoring_projects_soft_delete",
 			"breakpoints": true
+		},
+		{
+			"idx": 44,
+			"version": "7",
+			"when": 1779855000000,
+			"tag": "0045_webhook_dead_letter_status",
+			"breakpoints": true
 		}
 	]
 }

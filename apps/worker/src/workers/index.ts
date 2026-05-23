@@ -19,6 +19,7 @@ import { processRoiReport } from "../processors/roi-report.processor.js";
 import { processRollback } from "../processors/rollback.processor.js";
 import { processScan } from "../processors/scan.processor.js";
 import { processValidateDeployment } from "../processors/validate-deployment.processor.js";
+import { processWebhookDelivery } from "../processors/webhook-delivery.processor.js";
 import { createWorker } from "./create-worker.js";
 
 const log = createSystemLogger({ service: "worker", component: "workers" });
@@ -46,6 +47,7 @@ export function startWorkers(): { workers: Worker[]; pendingDlqWrites: PromiseTr
 		createWorker("validate-deployment", processValidateDeployment),
 		createWorker("citation-extraction", processCitationExtraction),
 		createWorker("csv-export", processCsvExport),
+		createWorker("webhook-delivery", processWebhookDelivery),
 	];
 
 	for (const worker of workers) {
