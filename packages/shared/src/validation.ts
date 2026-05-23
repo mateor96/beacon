@@ -235,9 +235,20 @@ export const CreateShopifyConnectionSchema = z.object({
 	}),
 });
 
+export const CreateWebflowConnectionSchema = z.object({
+	cmsType: z.literal("webflow"),
+	siteUrl: UrlSchema,
+	label: z.string().trim().max(100).optional(),
+	credentials: z.object({
+		siteId: z.string().trim().min(1, "Site-ID ist erforderlich").max(100),
+		apiToken: z.string().trim().min(1, "API-Token ist erforderlich").max(500),
+	}),
+});
+
 export const CreateCmsConnectionSchema = z.discriminatedUnion("cmsType", [
 	CreateWordPressConnectionSchema,
 	CreateShopifyConnectionSchema,
+	CreateWebflowConnectionSchema,
 ]);
 
 export type CreateCmsConnectionRequest = z.infer<typeof CreateCmsConnectionSchema>;
