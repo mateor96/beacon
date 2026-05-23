@@ -16,6 +16,7 @@
 		"@beacon/shared": "workspace:*",
 		"@beacon/db": "workspace:*",
 		"@beacon/api-sdk": "workspace:*",
+		"@beacon/crawler": "workspace:*",
 		"@beacon/scanner": "workspace:*",
 		"@beacon/ai": "workspace:*",
 		"@beacon/report": "workspace:*",

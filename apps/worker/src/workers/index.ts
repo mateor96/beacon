@@ -7,6 +7,7 @@ import { processAgentsMd } from "../processors/agents-md.processor.js";
 import { processAiVisibility } from "../processors/ai-visibility.processor.js";
 import { processAnalysis } from "../processors/analysis.processor.js";
 import { processCitationExtraction } from "../processors/citation-extraction.processor.js";
+import { processCrawl } from "../processors/crawl.processor.js";
 import { processCsvExport } from "../processors/csv-export.processor.js";
 import { processDeploy } from "../processors/deploy.processor.js";
 import { processEmail } from "../processors/email.processor.js";
@@ -48,6 +49,7 @@ export function startWorkers(): { workers: Worker[]; pendingDlqWrites: PromiseTr
 		createWorker("citation-extraction", processCitationExtraction),
 		createWorker("csv-export", processCsvExport),
 		createWorker("webhook-delivery", processWebhookDelivery),
+		createWorker("crawl", processCrawl),
 	];
 
 	for (const worker of workers) {

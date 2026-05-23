@@ -1,15 +1,15 @@
 import { relations } from "drizzle-orm";
 import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { profiles } from "./profiles";
+import { monitoringProjects } from "./monitoring";
 import { scans } from "./scans";
 
 export const siteCrawls = pgTable(
 	"site_crawls",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("user_id")
-			.references(() => profiles.id, { onDelete: "cascade" })
-			.notNull(),
+		monitoringProjectId: uuid("monitoring_project_id").references(() => monitoringProjects.id, {
+			onDelete: "set null",
+		}),
 		rootUrl: text("root_url").notNull(),
 		status: text("status", {
 			enum: ["pending", "crawling", "completed", "failed"],
@@ -26,7 +26,9 @@ export const siteCrawls = pgTable(
 			.defaultNow()
 			.$onUpdateFn(() => new Date()),
 	},
-	(table) => [index("idx_site_crawls_user").on(table.userId, table.startedAt.desc())],
+	(table) => [
+		index("idx_site_crawls_project").on(table.monitoringProjectId, table.startedAt.desc()),
+	],
 );
 
 export const siteCrawlPages = pgTable(
@@ -50,9 +52,9 @@ export const siteCrawlPages = pgTable(
 
 // Relations
 export const siteCrawlsRelations = relations(siteCrawls, ({ one, many }) => ({
-	user: one(profiles, {
-		fields: [siteCrawls.userId],
-		references: [profiles.id],
+	monitoringProject: one(monitoringProjects, {
+		fields: [siteCrawls.monitoringProjectId],
+		references: [monitoringProjects.id],
 	}),
 	pages: many(siteCrawlPages),
 }));

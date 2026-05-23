@@ -22,6 +22,7 @@ describe("QUEUE_NAMES", () => {
 			"citation-extraction",
 			"csv-export",
 			"webhook-delivery",
+			"crawl",
 		]);
 	});
 });
@@ -85,6 +86,7 @@ describe("QUEUE_CONFIG retention defaults", () => {
 		"validate-deployment",
 		"csv-export",
 		"webhook-delivery",
+		"crawl",
 	]);
 
 	it("removeOnComplete is 3600s (1h) for standard queues and 86400s (24h) for long-retention queues", () => {

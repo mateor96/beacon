@@ -33,6 +33,8 @@ export type {
 	CsvExportJobResult,
 	WebhookDeliveryJobData,
 	WebhookDeliveryJobResult,
+	CrawlJobData,
+	CrawlJobResult,
 	JobDataMap,
 	JobResultMap,
 	QueueName,
