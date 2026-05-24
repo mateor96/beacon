@@ -7,8 +7,15 @@ const MODEL = "gemini-2.0-flash";
 export class GeminiProvider implements AiQueryProvider {
 	readonly engine: AiEngine = "gemini";
 
+	/** @param apiKeyOverride injected key (e.g. from DB); falls back to env. */
+	constructor(private readonly apiKeyOverride?: string) {}
+
+	private get apiKey(): string | undefined {
+		return this.apiKeyOverride ?? process.env.GOOGLE_AI_API_KEY;
+	}
+
 	isConfigured(): boolean {
-		return !!process.env.GOOGLE_AI_API_KEY;
+		return !!this.apiKey;
 	}
 
 	async query(opts: {
@@ -16,7 +23,7 @@ export class GeminiProvider implements AiQueryProvider {
 		userMessage: string;
 		maxTokens?: number;
 	}): Promise<AiQueryResult> {
-		const apiKey = process.env.GOOGLE_AI_API_KEY;
+		const apiKey = this.apiKey;
 		if (!apiKey) {
 			throw new Error("GOOGLE_AI_API_KEY environment variable is required");
 		}
@@ -60,7 +67,7 @@ export class GeminiProvider implements AiQueryProvider {
 	}
 
 	async healthCheck(): Promise<AiHealthCheckResult> {
-		const apiKey = process.env.GOOGLE_AI_API_KEY;
+		const apiKey = this.apiKey;
 		if (!apiKey) {
 			return { ok: false, latencyMs: 0, error: "GOOGLE_AI_API_KEY not set" };
 		}

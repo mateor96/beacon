@@ -32,8 +32,11 @@ export async function processAiVisibility(
 
 	// Dynamic import to avoid hard dependency on @beacon/ai at load time
 	const { createConfiguredProviders } = await import("@beacon/ai");
+	const { db: keyDb, providerKeyQueries } = await import("@beacon/db");
 
-	let providers = createConfiguredProviders();
+	// DB-stored provider keys override env (no restart needed); per-job read.
+	const providerKeys = await providerKeyQueries.resolveProviderKeys(keyDb);
+	let providers = createConfiguredProviders(providerKeys);
 
 	// Filter to requested engines if specified
 	if (engines && engines.length > 0) {

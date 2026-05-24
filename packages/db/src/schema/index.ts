@@ -14,6 +14,7 @@ export { alerts, alertEvents } from "./alerts";
 export { waitlistSignups } from "./waitlist";
 export { deadLetterJobs } from "./dead-letter-jobs";
 export { emailLog, userEmailPreferences } from "./email";
+export { providerKeys } from "./provider-keys";
 export {
 	publicAuditRequests,
 	publicAuditResults,

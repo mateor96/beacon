@@ -7,8 +7,15 @@ const MODEL = "sonar";
 export class PerplexityProvider implements AiQueryProvider {
 	readonly engine: AiEngine = "perplexity";
 
+	/** @param apiKeyOverride injected key (e.g. from DB); falls back to env. */
+	constructor(private readonly apiKeyOverride?: string) {}
+
+	private get apiKey(): string | undefined {
+		return this.apiKeyOverride ?? process.env.PERPLEXITY_API_KEY;
+	}
+
 	isConfigured(): boolean {
-		return !!process.env.PERPLEXITY_API_KEY;
+		return !!this.apiKey;
 	}
 
 	async query(opts: {
@@ -16,7 +23,7 @@ export class PerplexityProvider implements AiQueryProvider {
 		userMessage: string;
 		maxTokens?: number;
 	}): Promise<AiQueryResult> {
-		const apiKey = process.env.PERPLEXITY_API_KEY;
+		const apiKey = this.apiKey;
 		if (!apiKey) {
 			throw new Error("PERPLEXITY_API_KEY environment variable is required");
 		}
@@ -60,7 +67,7 @@ export class PerplexityProvider implements AiQueryProvider {
 	}
 
 	async healthCheck(): Promise<AiHealthCheckResult> {
-		const apiKey = process.env.PERPLEXITY_API_KEY;
+		const apiKey = this.apiKey;
 		if (!apiKey) {
 			return { ok: false, latencyMs: 0, error: "PERPLEXITY_API_KEY not set" };
 		}
