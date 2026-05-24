@@ -22,18 +22,30 @@ const PROVIDER_META: Record<string, { label: string; envVar: string }> = {
 	gemini: { label: "Gemini (Google)", envVar: "GOOGLE_AI_API_KEY" },
 };
 
-function readProviderStatus(dbKeys: Partial<Record<string, string>>): ProviderStatus[] {
+function readProviderStatus(
+	dbKeys: Partial<Record<string, string>>,
+	updatedByEngine: Record<string, string>,
+): ProviderStatus[] {
 	const instances = [
 		new ClaudeProvider(dbKeys.claude),
 		new ChatGptProvider(dbKeys.chatgpt),
 		new PerplexityProvider(dbKeys.perplexity),
 		new GeminiProvider(dbKeys.gemini),
 	];
-	return instances.map((p) => ({
-		label: PROVIDER_META[p.engine]?.label ?? p.engine,
-		envVar: PROVIDER_META[p.engine]?.envVar ?? "",
-		configured: p.isConfigured(),
-	}));
+	return instances.map((p) => {
+		const dbKey = dbKeys[p.engine];
+		const envVar = PROVIDER_META[p.engine]?.envVar ?? "";
+		const source: ProviderStatus["source"] = dbKey ? "db" : process.env[envVar] ? "env" : "none";
+		return {
+			engine: p.engine,
+			label: PROVIDER_META[p.engine]?.label ?? p.engine,
+			envVar,
+			configured: p.isConfigured(),
+			source,
+			last4: dbKey ? dbKey.slice(-4) : undefined,
+			updatedAt: updatedByEngine[p.engine],
+		};
+	});
 }
 
 async function readQueueMetrics(): Promise<AllQueueMetrics | null> {
@@ -74,8 +86,14 @@ const EXTRA_KEYS: { label: string; envVar: string }[] = [
 ];
 
 export default async function StatusPage() {
-	const dbKeys = await providerKeyQueries.resolveProviderKeys(db).catch(() => ({}));
-	const providers = readProviderStatus(dbKeys);
+	const [dbKeys, keyStatus] = await Promise.all([
+		providerKeyQueries.resolveProviderKeys(db).catch(() => ({})),
+		providerKeyQueries.listStatus(db).catch(() => [] as { engine: string; updatedAt: Date }[]),
+	]);
+	const updatedByEngine = Object.fromEntries(
+		keyStatus.map((r) => [r.engine, r.updatedAt?.toISOString?.() ?? String(r.updatedAt)]),
+	);
+	const providers = readProviderStatus(dbKeys, updatedByEngine);
 	const [queueMetrics, dlq, emails, cron] = await Promise.all([
 		readQueueMetrics(),
 		readDlq(),

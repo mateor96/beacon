@@ -28,4 +28,5 @@ export {
 	webhookQueries,
 } from "./queries/index";
 export type { CleanupResult, HtmlPurgeResult } from "./queries/cleanup";
+export { PROVIDER_ENGINES, type ProviderEngine } from "./queries/provider-keys";
 export { mergeScanFixes, type MergeScanFixesResult } from "./rpc";
