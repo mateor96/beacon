@@ -13,6 +13,7 @@ export {
 	waitlistQueries,
 	deadLetterJobQueries,
 	emailQueries,
+	providerKeyQueries,
 	publicAuditQueries,
 	aiVisibilityQueries,
 	competitorQueries,

@@ -18,6 +18,7 @@ export * as cleanupQueries from "./cleanup";
 export * as waitlistQueries from "./waitlist";
 export * as deadLetterJobQueries from "./dead-letter-jobs";
 export * as emailQueries from "./email";
+export * as providerKeyQueries from "./provider-keys";
 export * as publicAuditQueries from "./public-audit";
 export * as aiVisibilityQueries from "./ai-visibility";
 export * as competitorQueries from "./competitors";

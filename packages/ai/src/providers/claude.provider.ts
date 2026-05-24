@@ -7,8 +7,15 @@ const MODEL = "claude-haiku-4-5-20251001";
 export class ClaudeProvider implements AiQueryProvider {
 	readonly engine: AiEngine = "claude";
 
+	/** @param apiKeyOverride injected key (e.g. from DB); falls back to env. */
+	constructor(private readonly apiKeyOverride?: string) {}
+
+	private get apiKey(): string | undefined {
+		return this.apiKeyOverride ?? process.env.ANTHROPIC_API_KEY;
+	}
+
 	isConfigured(): boolean {
-		return !!process.env.ANTHROPIC_API_KEY;
+		return !!this.apiKey;
 	}
 
 	async query(opts: {
@@ -16,7 +23,7 @@ export class ClaudeProvider implements AiQueryProvider {
 		userMessage: string;
 		maxTokens?: number;
 	}): Promise<AiQueryResult> {
-		const apiKey = process.env.ANTHROPIC_API_KEY;
+		const apiKey = this.apiKey;
 		if (!apiKey) {
 			throw new Error("ANTHROPIC_API_KEY environment variable is required");
 		}
@@ -59,7 +66,7 @@ export class ClaudeProvider implements AiQueryProvider {
 	}
 
 	async healthCheck(): Promise<AiHealthCheckResult> {
-		const apiKey = process.env.ANTHROPIC_API_KEY;
+		const apiKey = this.apiKey;
 		if (!apiKey) {
 			return { ok: false, latencyMs: 0, error: "ANTHROPIC_API_KEY not set" };
 		}

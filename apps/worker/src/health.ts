@@ -73,7 +73,8 @@ export function registerHealthRoute(
 
 	app.get("/api/admin/providers/health", async (c) => {
 		const { createConfiguredProviders } = await import("@beacon/ai");
-		const providers = createConfiguredProviders();
+		const { db, providerKeyQueries } = await import("@beacon/db");
+		const providers = createConfiguredProviders(await providerKeyQueries.resolveProviderKeys(db));
 		const results = await Promise.all(
 			providers.map(async (p) => {
 				const check = await p.healthCheck();

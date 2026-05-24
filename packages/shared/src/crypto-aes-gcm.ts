@@ -67,6 +67,7 @@ const ACTIVE_KID = "cms-v1";
  */
 const ENV_VAR_BY_KID: Record<string, string> = {
 	"cms-v1": "CMS_CREDENTIALS_KEY",
+	"provider-v1": "PROVIDER_KEYS_KEY",
 };
 
 const KEY_CACHE = new Map<string, Buffer>();
@@ -101,9 +102,9 @@ function assertEnvelopeShape(o: unknown): asserts o is EncryptionEnvelope {
 	}
 }
 
-export function encryptCmsCredentials({ plaintext, aad }: EncryptParams): string {
+function encryptWithKid(plaintext: string, aad: string | undefined, kid: string): string {
 	if (!aad) throw new CmsCredentialsDecryptError("aad required");
-	const key = loadKey(ACTIVE_KID);
+	const key = loadKey(kid);
 	const iv = randomBytes(12);
 	const cipher = createCipheriv("aes-256-gcm", key, iv);
 	cipher.setAAD(Buffer.from(aad, "utf8"));
@@ -111,7 +112,7 @@ export function encryptCmsCredentials({ plaintext, aad }: EncryptParams): string
 	const tag = cipher.getAuthTag();
 	const envelope: EncryptionEnvelope = {
 		v: 1,
-		kid: ACTIVE_KID,
+		kid,
 		iv: iv.toString("base64"),
 		tag: tag.toString("base64"),
 		ct: ct.toString("base64"),
@@ -119,7 +120,9 @@ export function encryptCmsCredentials({ plaintext, aad }: EncryptParams): string
 	return JSON.stringify(envelope);
 }
 
-export function decryptCmsCredentials({ envelope, aad }: DecryptParams): string {
+// Decrypt is kid-agnostic: the kid is read from the envelope, so the same
+// routine handles every secret domain (CMS credentials, provider keys, …).
+function decryptEnvelope({ envelope, aad }: DecryptParams): string {
 	if (!aad) throw new CmsCredentialsDecryptError("aad required");
 	let parsed: unknown;
 	try {
@@ -143,6 +146,24 @@ export function decryptCmsCredentials({ envelope, aad }: DecryptParams): string 
 	} catch {
 		throw new CmsCredentialsDecryptError("authentication failed (tamper or wrong key/aad)");
 	}
+}
+
+export function encryptCmsCredentials({ plaintext, aad }: EncryptParams): string {
+	return encryptWithKid(plaintext, aad, ACTIVE_KID);
+}
+
+export function decryptCmsCredentials(params: DecryptParams): string {
+	return decryptEnvelope(params);
+}
+
+/** Encrypt an AI provider API key (kid `provider-v1`, key `PROVIDER_KEYS_KEY`). */
+export function encryptProviderKey({ plaintext, aad }: EncryptParams): string {
+	return encryptWithKid(plaintext, aad, "provider-v1");
+}
+
+/** Decrypt an AI provider API key envelope. */
+export function decryptProviderKey(params: DecryptParams): string {
+	return decryptEnvelope(params);
 }
 
 /**

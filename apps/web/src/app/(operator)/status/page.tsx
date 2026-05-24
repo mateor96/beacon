@@ -6,7 +6,7 @@ import { type ProviderStatus, ProviderStatusPanel } from "@/components/settings/
 import { QueueHealthPanel } from "@/components/settings/queue-health";
 import { fetchCronHealth } from "@/lib/worker-client";
 import { ChatGptProvider, ClaudeProvider, GeminiProvider, PerplexityProvider } from "@beacon/ai";
-import { db, deadLetterJobQueries, emailQueries } from "@beacon/db";
+import { db, deadLetterJobQueries, emailQueries, providerKeyQueries } from "@beacon/db";
 import { type AllQueueMetrics, getQueueMetrics } from "@beacon/queue";
 
 export const dynamic = "force-dynamic";
@@ -22,12 +22,12 @@ const PROVIDER_META: Record<string, { label: string; envVar: string }> = {
 	gemini: { label: "Gemini (Google)", envVar: "GOOGLE_AI_API_KEY" },
 };
 
-function readProviderStatus(): ProviderStatus[] {
+function readProviderStatus(dbKeys: Partial<Record<string, string>>): ProviderStatus[] {
 	const instances = [
-		new ClaudeProvider(),
-		new ChatGptProvider(),
-		new PerplexityProvider(),
-		new GeminiProvider(),
+		new ClaudeProvider(dbKeys.claude),
+		new ChatGptProvider(dbKeys.chatgpt),
+		new PerplexityProvider(dbKeys.perplexity),
+		new GeminiProvider(dbKeys.gemini),
 	];
 	return instances.map((p) => ({
 		label: PROVIDER_META[p.engine]?.label ?? p.engine,
@@ -74,7 +74,8 @@ const EXTRA_KEYS: { label: string; envVar: string }[] = [
 ];
 
 export default async function StatusPage() {
-	const providers = readProviderStatus();
+	const dbKeys = await providerKeyQueries.resolveProviderKeys(db).catch(() => ({}));
+	const providers = readProviderStatus(dbKeys);
 	const [queueMetrics, dlq, emails, cron] = await Promise.all([
 		readQueueMetrics(),
 		readDlq(),

@@ -323,6 +323,13 @@
 			"when": 1779855500000,
 			"tag": "0046_site_crawls_instance_scoped",
 			"breakpoints": true
+		},
+		{
+			"idx": 46,
+			"version": "7",
+			"when": 1779856000000,
+			"tag": "0047_provider_keys",
+			"breakpoints": true
 		}
 	]
 }

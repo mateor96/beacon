@@ -6,7 +6,7 @@ import {
 	rateLimitHeaders,
 } from "@/lib/rate-limit";
 import { createConfiguredProviders } from "@beacon/ai";
-import { db, monitoringQueries } from "@beacon/db";
+import { db, monitoringQueries, providerKeyQueries } from "@beacon/db";
 import { addJob } from "@beacon/queue";
 import { UuidSchema } from "@beacon/shared";
 import { NextResponse } from "next/server";
@@ -42,7 +42,8 @@ export async function POST(request: Request, { params }: RouteContext) {
 		return NextResponse.json({ error: "Projekt nicht gefunden." }, { status: 404 });
 	}
 
-	if (createConfiguredProviders().length === 0) {
+	const providerKeys = await providerKeyQueries.resolveProviderKeys(db);
+	if (createConfiguredProviders(providerKeys).length === 0) {
 		return NextResponse.json(
 			{ error: "Kein AI-Provider konfiguriert. Setze einen Provider-Key und starte neu." },
 			{ status: 409, headers: rateLimitHeaders(rate) },
