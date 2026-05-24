@@ -384,6 +384,111 @@ export async function getCitationStatsForUser(
 }
 
 /**
+ * Instance-wide citation list — the anonymous/instance-scoped counterpart of
+ * {@link listCitationsForUser}. Anonymous scans carry `scans.userId = null`, so
+ * a user-scoped filter would match nothing; this variant drops the userId
+ * predicate (and the now-unneeded scans join) and lists every citation in the
+ * instance. Same cursor pagination and filters.
+ */
+export async function listCitationsForInstance(db: DbClient, filters: CitationListFilters) {
+	const conditions = [];
+	if (filters.modelName) conditions.push(eq(citations.modelName, filters.modelName));
+	if (filters.dateFrom) conditions.push(gte(citations.extractedAt, filters.dateFrom));
+	if (filters.dateTo) conditions.push(lte(citations.extractedAt, filters.dateTo));
+	if (filters.cursor) conditions.push(lt(citations.extractedAt, filters.cursor));
+	if (filters.domain) conditions.push(eq(citedPages.domain, filters.domain));
+	const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+	const selectCols = {
+		id: citations.id,
+		auditId: citations.auditId,
+		modelName: citations.modelName,
+		queryText: citations.queryText,
+		extractedAt: citations.extractedAt,
+	};
+
+	if (filters.domain) {
+		return db
+			.selectDistinct(selectCols)
+			.from(citations)
+			.innerJoin(citationPageMappings, eq(citationPageMappings.citationId, citations.id))
+			.innerJoin(citedPages, eq(citationPageMappings.citedPageId, citedPages.id))
+			.where(where)
+			.orderBy(desc(citations.extractedAt))
+			.limit(filters.limit + 1);
+	}
+
+	return db
+		.selectDistinct(selectCols)
+		.from(citations)
+		.where(where)
+		.orderBy(desc(citations.extractedAt))
+		.limit(filters.limit + 1);
+}
+
+/**
+ * Instance-wide citation stats — the instance-scoped counterpart of
+ * {@link getCitationStatsForUser}. Drops the userId predicate/join so it
+ * aggregates every citation in the instance (anonymous scans are
+ * `userId = null`). Same shape: total, per-model, top pages, top domains, trend.
+ */
+export async function getCitationStatsForInstance(db: DbClient, trendDays: 30 | 60 | 90 = 30) {
+	const windowSql = sql.raw(`now() - interval '${trendDays} days'`);
+	const priorWindowSql = sql.raw(`now() - interval '${trendDays * 2} days'`);
+
+	const [totalRow, byModel, topPages, topDomains, trend] = await Promise.all([
+		db.select({ total: sql<number>`count(${citations.id})::int` }).from(citations),
+		db
+			.select({
+				modelName: citations.modelName,
+				count: sql<number>`count(${citations.id})::int`,
+			})
+			.from(citations)
+			.groupBy(citations.modelName)
+			.orderBy(desc(sql`count(${citations.id})`)),
+		db
+			.select({
+				clientPageId: siteCrawlPages.id,
+				url: siteCrawlPages.url,
+				domain: citedPages.domain,
+				count: sql<number>`count(*)::int`,
+				currentPeriodCount: sql<number>`count(*) filter (where ${citations.extractedAt} >= ${windowSql})::int`,
+				priorPeriodCount: sql<number>`count(*) filter (where ${citations.extractedAt} >= ${priorWindowSql} and ${citations.extractedAt} < ${windowSql})::int`,
+			})
+			.from(siteCrawlPages)
+			.innerJoin(citedPages, eq(citedPages.clientPageId, siteCrawlPages.id))
+			.innerJoin(citationPageMappings, eq(citationPageMappings.citedPageId, citedPages.id))
+			.innerJoin(citations, eq(citationPageMappings.citationId, citations.id))
+			.groupBy(siteCrawlPages.id, siteCrawlPages.url, citedPages.domain)
+			.orderBy(desc(sql`count(*)`))
+			.limit(10),
+		db
+			.select({
+				domain: citedPages.domain,
+				count: sql<number>`count(*)::int`,
+			})
+			.from(citedPages)
+			.innerJoin(citationPageMappings, eq(citationPageMappings.citedPageId, citedPages.id))
+			.innerJoin(citations, eq(citationPageMappings.citationId, citations.id))
+			.groupBy(citedPages.domain)
+			.orderBy(desc(sql`count(*)`))
+			.limit(10),
+		db
+			.select({
+				day: sql<string>`to_char(date_trunc('day', ${citations.extractedAt} at time zone 'UTC'), 'YYYY-MM-DD')`,
+				count: sql<number>`count(*)::int`,
+			})
+			.from(citations)
+			.where(gte(citations.extractedAt, windowSql))
+			.groupBy(sql`date_trunc('day', ${citations.extractedAt} at time zone 'UTC')`)
+			.orderBy(sql`date_trunc('day', ${citations.extractedAt} at time zone 'UTC') asc`),
+	]);
+
+	const total = totalRow[0]?.total ?? 0;
+	return { total, byModel, topPages, topDomains, trend };
+}
+
+/**
  * List citations for a specific client page (via cited_pages.client_page_id),
  * joined back to the citing LLM response. Cursor-paginated by extractedAt.
  */
