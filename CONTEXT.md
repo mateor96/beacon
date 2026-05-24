@@ -59,10 +59,13 @@ No auth, no billing, no tenant model. Code for those concerns lives under
 All operator surfaces live under the `(operator)` route group with a shared
 shell + sidebar (`apps/web/src/app/(operator)/`, see `docs/adr/001`). It exposes
 monitoring projects (with per-project tabs: Übersicht, Wettbewerber, Reddit,
-Alerts), instance-wide Citations, manual AI-visibility sweeps + schedules, an
-env-only Status/Health page (provider keys, queue health, DLQ, email log), and
-CRUD for CMS connections, webhooks, competitors and alerts. Config stays
-env-only (no secrets in the DB). The single-tenant `INSTANCE_USER_ID` sentinel
+Alerts), instance-wide Citations, manual AI-visibility sweeps + schedules, a
+Status/Health page (provider keys, queue health, DLQ, email log), and CRUD for
+CMS connections, webhooks, competitors and alerts. Most config is env-only, but
+secrets that the operator needs to rotate live encrypted in the DB (AES-256-GCM,
+via `crypto-aes-gcm.ts`): CMS credentials and, since v0.4, **AI provider keys**
+managed from the Status page (DB keys override env at runtime, no restart;
+`PROVIDER_KEYS_KEY` encrypts them). The single-tenant `INSTANCE_USER_ID` sentinel
 profile (seeded by `db:migrate`) backs feature tables that still carry a
 NOT NULL `userId` FK (e.g. alerts).
 
