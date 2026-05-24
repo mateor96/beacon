@@ -64,6 +64,7 @@ export {
 	PLAN_RETENTION_DAYS,
 	HTML_CONTENT_RETENTION_HOURS,
 	ANONYMOUS_SCAN_DAILY_LIMIT,
+	INSTANCE_USER_ID,
 } from "./constants.js";
 export type { CheckMetadata, AICrawler } from "./constants.js";
 
@@ -99,6 +100,10 @@ export {
 	MonitoringScheduleCreateSchema,
 	MonitoringScheduleUpdateSchema,
 	CompetitorCreateSchema,
+	AlertTypeSchema,
+	AlertChannelSchema,
+	AlertCreateSchema,
+	AlertUpdateSchema,
 } from "./validation.js";
 export type {
 	ValidUrl,
@@ -121,6 +126,8 @@ export type {
 	MonitoringScheduleCreateInput,
 	MonitoringScheduleUpdateInput,
 	CompetitorCreateInput,
+	AlertCreateInput,
+	AlertUpdateInput,
 } from "./validation.js";
 
 // Deployment state machine (#291)

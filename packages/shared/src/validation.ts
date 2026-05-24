@@ -186,6 +186,31 @@ export const CompetitorCreateSchema = z.object({
 
 export type CompetitorCreateInput = z.infer<typeof CompetitorCreateSchema>;
 
+// ── Alerts ──────────────────────────────────────────────────
+
+export const AlertTypeSchema = z.enum(["visibility_drop", "new_citation", "competitor_gain"]);
+export const AlertChannelSchema = z.enum(["email", "webhook"]);
+
+export const AlertCreateSchema = z.object({
+	type: AlertTypeSchema,
+	channel: AlertChannelSchema,
+	projectId: UuidSchema.optional(),
+});
+
+export type AlertCreateInput = z.infer<typeof AlertCreateSchema>;
+
+export const AlertUpdateSchema = z
+	.object({
+		type: AlertTypeSchema.optional(),
+		channel: AlertChannelSchema.optional(),
+		enabled: z.boolean().optional(),
+	})
+	.refine((v) => Object.values(v).some((x) => x !== undefined), {
+		message: "Mindestens ein Feld muss gesetzt sein",
+	});
+
+export type AlertUpdateInput = z.infer<typeof AlertUpdateSchema>;
+
 // ── Disposable Email Detection ──────────────────────────────
 
 const DISPOSABLE_DOMAIN_SET = new Set<string>(disposableDomains);

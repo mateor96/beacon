@@ -261,6 +261,16 @@ export const HTML_CONTENT_RETENTION_HOURS = 72;
 
 export const ANONYMOUS_SCAN_DAILY_LIMIT = 3;
 
+// ── Instance identity ────────────────────────────────────────
+
+/**
+ * Deterministic sentinel profile id for the single-tenant (anonymous)
+ * instance. Some feature tables (e.g. `alerts.userId`) still carry a NOT NULL
+ * FK to `profiles.id` from the multi-tenant era; operator-created rows use this
+ * id. Seeded by `db:migrate` (see packages/db seed).
+ */
+export const INSTANCE_USER_ID = "00000000-0000-4000-8000-000000000001";
+
 // ── Helpers ──────────────────────────────────────────────────
 
 export const MAX_SCORE = 100;
