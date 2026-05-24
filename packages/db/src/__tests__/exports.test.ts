@@ -28,6 +28,7 @@ describe("@beacon/db exports", () => {
 			"waitlistQueries",
 			"deadLetterJobQueries",
 			"emailQueries",
+			"providerKeyQueries",
 			"publicAuditQueries",
 			"aiVisibilityQueries",
 			"competitorQueries",
