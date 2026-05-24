@@ -44,7 +44,7 @@ export class UnresolvedPlaceholdersError extends Error {
 		public readonly templateKey: string,
 	) {
 		super(
-			`Prompt-Template "${templateKey}" enthaelt nicht aufgelöste Platzhalter: ${placeholders.join(", ")}`,
+			`Prompt-Template "${templateKey}" enthält nicht aufgelöste Platzhalter: ${placeholders.join(", ")}`,
 		);
 		this.name = "UnresolvedPlaceholdersError";
 	}
