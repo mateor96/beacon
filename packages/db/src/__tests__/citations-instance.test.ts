@@ -16,7 +16,8 @@ function makeChainable(rows: unknown[]) {
 					return (resolve: (v: unknown) => void) => resolve(rows);
 				}
 				return (...args: unknown[]) => {
-					(calls[prop] ??= []).push(args);
+					if (!calls[prop]) calls[prop] = [];
+					calls[prop].push(args);
 					return proxy;
 				};
 			},
