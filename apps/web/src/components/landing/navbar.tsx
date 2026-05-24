@@ -23,11 +23,6 @@ export function Navbar() {
 						</a>
 					</li>
 					<li>
-						<a href="/pricing" className="text-text-muted transition-colors hover:text-text">
-							Pricing
-						</a>
-					</li>
-					<li>
 						<a href="#faq" className="text-text-muted transition-colors hover:text-text">
 							FAQ
 						</a>
@@ -35,12 +30,6 @@ export function Navbar() {
 				</ul>
 
 				<div className="flex items-center gap-3">
-					<a
-						href="/login"
-						className="text-sm font-medium text-text-muted transition-colors hover:text-text"
-					>
-						Anmelden
-					</a>
 					<a
 						href="#scan"
 						className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-hover"
