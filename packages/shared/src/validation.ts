@@ -172,6 +172,20 @@ export const MonitoringScheduleUpdateSchema = z
 
 export type MonitoringScheduleUpdateInput = z.infer<typeof MonitoringScheduleUpdateSchema>;
 
+// ── Competitors ─────────────────────────────────────────────
+
+export const CompetitorCreateSchema = z.object({
+	name: z.string().trim().min(1, "Name ist erforderlich").max(200),
+	domain: z
+		.string()
+		.trim()
+		.max(255)
+		.optional()
+		.transform((v) => (v && v.length > 0 ? v : undefined)),
+});
+
+export type CompetitorCreateInput = z.infer<typeof CompetitorCreateSchema>;
+
 // ── Disposable Email Detection ──────────────────────────────
 
 const DISPOSABLE_DOMAIN_SET = new Set<string>(disposableDomains);
