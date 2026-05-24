@@ -95,6 +95,9 @@ export {
 	CreateCmsConnectionSchema,
 	DeployRequestSchema,
 	MonitoringProjectCreateSchema,
+	ScheduleFrequencySchema,
+	MonitoringScheduleCreateSchema,
+	MonitoringScheduleUpdateSchema,
 } from "./validation.js";
 export type {
 	ValidUrl,
@@ -113,6 +116,9 @@ export type {
 	CreateCmsConnectionRequest,
 	DeployRequest,
 	MonitoringProjectCreateInput,
+	ScheduleFrequency,
+	MonitoringScheduleCreateInput,
+	MonitoringScheduleUpdateInput,
 } from "./validation.js";
 
 // Deployment state machine (#291)

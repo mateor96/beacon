@@ -144,6 +144,19 @@ export function updateScheduleAfterRun(db: DbClient, id: string, nextRunAt: Date
 		.then((rows) => rows[0]);
 }
 
+export function updateSchedule(
+	db: DbClient,
+	id: string,
+	updates: { frequency?: string; enabled?: boolean; nextRunAt?: Date },
+) {
+	return db
+		.update(monitoringSchedules)
+		.set(updates)
+		.where(eq(monitoringSchedules.id, id))
+		.returning()
+		.then((rows) => rows[0]);
+}
+
 export function deleteSchedule(db: DbClient, id: string) {
 	return db
 		.delete(monitoringSchedules)
