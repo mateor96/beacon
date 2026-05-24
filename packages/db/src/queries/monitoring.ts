@@ -135,6 +135,18 @@ export function getNextSchedules(db: DbClient, before: Date) {
 	});
 }
 
+/**
+ * Distinct project ids that have at least one enabled schedule. The daily
+ * blanket sweep skips these — they are driven by the schedule dispatcher.
+ */
+export async function listProjectIdsWithEnabledSchedule(db: DbClient): Promise<string[]> {
+	const rows = await db
+		.selectDistinct({ projectId: monitoringSchedules.projectId })
+		.from(monitoringSchedules)
+		.where(eq(monitoringSchedules.enabled, true));
+	return rows.map((r) => r.projectId);
+}
+
 export function updateScheduleAfterRun(db: DbClient, id: string, nextRunAt: Date) {
 	return db
 		.update(monitoringSchedules)

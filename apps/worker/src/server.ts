@@ -5,6 +5,7 @@ import { aiVisibilitySweepJob } from "./cron/jobs/ai-visibility-sweep.js";
 import { backlogCheckJob } from "./cron/jobs/backlog-check.js";
 import { dlqRetentionJob } from "./cron/jobs/dlq-retention.js";
 import { redditDiscoveryJob } from "./cron/jobs/reddit-discovery.js";
+import { scheduleDispatcherJob } from "./cron/jobs/schedule-dispatcher.js";
 import { staleDeploymentReaperJob } from "./cron/jobs/stale-deployment-reaper.js";
 import { staleScanReaperJob } from "./cron/jobs/stale-scan-reaper.js";
 import { CronRegistry } from "./cron/registry.js";
@@ -31,6 +32,7 @@ async function main() {
 	cronRegistry.register(backlogCheckJob);
 	cronRegistry.register(aiVisibilitySweepJob);
 	cronRegistry.register(redditDiscoveryJob);
+	cronRegistry.register(scheduleDispatcherJob);
 	await cronRegistry.start();
 
 	registerHealthRoute(app, () => isShuttingDown, cronRegistry);

@@ -69,10 +69,12 @@ managed from the Status page (DB keys override env at runtime, no restart;
 profile (seeded by `db:migrate`) backs feature tables that still carry a
 NOT NULL `userId` FK (e.g. alerts).
 
-Two surfaces are stored-but-not-yet-evaluated (the UI says so): monitoring
-**schedules** (the daily sweep cron doesn't yet consume `monitoring_schedules`)
-and **alerts** (no evaluator dispatches them yet). Both await a worker-side
-dispatcher.
+Monitoring **schedules** are executed by the `schedule-dispatcher` cron (v0.5,
+hourly): due `monitoring_schedules` enqueue an AI-visibility sweep and advance
+`nextRunAt`; the daily blanket sweep skips schedule-managed projects, so a
+schedule overrides the default cadence for its project. **Alerts** are still
+stored-but-not-evaluated (no evaluator/delivery yet — needs product decisions on
+thresholds + destinations; tracked in the v0.5 epic).
 
 Multi-page crawl (#25) and webhook delivery (#24) — previously reserved — are
 now implemented as of v0.2.
