@@ -31,6 +31,12 @@ export function Navbar() {
 
 				<div className="flex items-center gap-3">
 					<a
+						href="/dashboard"
+						className="text-sm font-medium text-text-muted transition-colors hover:text-text"
+					>
+						Konsole
+					</a>
+					<a
 						href="#scan"
 						className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-hover"
 					>

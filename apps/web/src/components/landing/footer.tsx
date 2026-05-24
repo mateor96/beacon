@@ -11,6 +11,11 @@ export function Footer() {
 				<nav>
 					<ul className="flex gap-6 text-sm text-text-muted">
 						<li>
+							<a href="/dashboard" className="transition-colors hover:text-text">
+								Konsole
+							</a>
+						</li>
+						<li>
 							<a href="/impressum" className="transition-colors hover:text-text">
 								Impressum
 							</a>
