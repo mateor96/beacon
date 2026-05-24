@@ -149,8 +149,8 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 					<h2 className="text-xl font-semibold text-text">Zeitpläne</h2>
 				</div>
 				<p className="mb-3 text-xs text-text-muted">
-					Hinweis: Zeitpläne werden gespeichert, aber noch nicht automatisch ausgeführt — der
-					AI-Visibility-Sweep läuft aktuell global täglich. Ein Zeitplan-Dispatcher folgt.
+					Ein aktiver Zeitplan steuert die Sweep-Frequenz dieses Projekts (stündlich, täglich oder
+					wöchentlich) und ersetzt den globalen Tages-Sweep. Der Dispatcher läuft stündlich.
 				</p>
 				<ScheduleManager projectId={id} schedules={scheduleViews} />
 			</section>

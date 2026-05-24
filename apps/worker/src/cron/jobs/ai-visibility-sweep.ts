@@ -17,7 +17,12 @@ export const aiVisibilitySweepJob: CronJobDefinition = {
 	name: "ai-visibility-sweep",
 	pattern: "@daily",
 	handler: async () => {
-		const projects = await monitoringQueries.listAllProjects(db);
+		// Projects with an enabled schedule are driven by the schedule-dispatcher
+		// cron, so skip them here to avoid double-sweeping.
+		const scheduled = new Set(await monitoringQueries.listProjectIdsWithEnabledSchedule(db));
+		const projects = (await monitoringQueries.listAllProjects(db)).filter(
+			(p) => !scheduled.has(p.id),
+		);
 		let enqueued = 0;
 		const today = new Date().toISOString().slice(0, 10);
 
