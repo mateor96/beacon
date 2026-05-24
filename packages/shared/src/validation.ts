@@ -150,6 +150,28 @@ export const MonitoringProjectCreateSchema = z.object({
 
 export type MonitoringProjectCreateInput = z.infer<typeof MonitoringProjectCreateSchema>;
 
+// ── Monitoring Schedules ────────────────────────────────────
+
+export const ScheduleFrequencySchema = z.enum(["hourly", "daily", "weekly"]);
+export type ScheduleFrequency = z.infer<typeof ScheduleFrequencySchema>;
+
+export const MonitoringScheduleCreateSchema = z.object({
+	frequency: ScheduleFrequencySchema,
+});
+
+export type MonitoringScheduleCreateInput = z.infer<typeof MonitoringScheduleCreateSchema>;
+
+export const MonitoringScheduleUpdateSchema = z
+	.object({
+		frequency: ScheduleFrequencySchema.optional(),
+		enabled: z.boolean().optional(),
+	})
+	.refine((v) => v.frequency !== undefined || v.enabled !== undefined, {
+		message: "Mindestens ein Feld muss gesetzt sein",
+	});
+
+export type MonitoringScheduleUpdateInput = z.infer<typeof MonitoringScheduleUpdateSchema>;
+
 // ── Disposable Email Detection ──────────────────────────────
 
 const DISPOSABLE_DOMAIN_SET = new Set<string>(disposableDomains);

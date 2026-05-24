@@ -1,6 +1,9 @@
 import { CrawlTrigger } from "@/components/monitoring/crawl-trigger";
 import { DeleteProjectButton } from "@/components/monitoring/delete-project-button";
 import { RoiReportTrigger } from "@/components/monitoring/roi-report-trigger";
+import { ScheduleManager, type ScheduleView } from "@/components/monitoring/schedule-manager";
+import { SweepTrigger } from "@/components/monitoring/sweep-trigger";
+import { createConfiguredProviders } from "@beacon/ai";
 import { aiVisibilityQueries, crawlQueries, db, monitoringQueries, roiQueries } from "@beacon/db";
 import { UuidSchema } from "@beacon/shared";
 import Link from "next/link";
@@ -27,6 +30,16 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 	const snapshots = await aiVisibilityQueries.getSnapshotsByProjectId(db, id, { limit: 20 });
 	const roiReports = await roiQueries.getReportsForProject(db, id);
 	const crawls = await crawlQueries.listForProject(db, id, { limit: 5 });
+	const schedules = await monitoringQueries.getSchedulesByProjectId(db, id);
+
+	const providersConfigured = createConfiguredProviders().length > 0;
+	const scheduleViews: ScheduleView[] = schedules.map((s) => ({
+		id: s.id,
+		frequency: s.frequency,
+		nextRunAt: s.nextRunAt.toISOString(),
+		lastRunAt: s.lastRunAt?.toISOString() ?? null,
+		enabled: s.enabled,
+	}));
 
 	return (
 		<main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -154,11 +167,28 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 				)}
 			</section>
 
+			<section className="mb-8">
+				<div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+					<h2 className="text-xl font-semibold text-text">Zeitpläne</h2>
+				</div>
+				<p className="mb-3 text-xs text-text-muted">
+					Hinweis: Zeitpläne werden gespeichert, aber noch nicht automatisch ausgeführt — der
+					AI-Visibility-Sweep läuft aktuell global täglich. Ein Zeitplan-Dispatcher folgt.
+				</p>
+				<ScheduleManager projectId={id} schedules={scheduleViews} />
+			</section>
+
 			<section>
-				<h2 className="mb-3 text-xl font-semibold text-text">Letzte Snapshots</h2>
+				<div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+					<h2 className="text-xl font-semibold text-text">Letzte Snapshots</h2>
+					<SweepTrigger projectId={id} disabled={!providersConfigured} />
+				</div>
 				{snapshots.length === 0 ? (
 					<p className="rounded-lg border border-border bg-surface p-6 text-text-muted">
 						Noch keine Snapshots. Der erste AI-Visibility-Job läuft im Hintergrund.
+						{!providersConfigured
+							? " Hinweis: Es ist kein AI-Provider konfiguriert — siehe Status & Health."
+							: ""}
 					</p>
 				) : (
 					<div className="overflow-x-auto rounded-lg border border-border">
