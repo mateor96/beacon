@@ -1,12 +1,10 @@
 import { CrawlTrigger } from "@/components/monitoring/crawl-trigger";
-import { DeleteProjectButton } from "@/components/monitoring/delete-project-button";
 import { RoiReportTrigger } from "@/components/monitoring/roi-report-trigger";
 import { ScheduleManager, type ScheduleView } from "@/components/monitoring/schedule-manager";
 import { SweepTrigger } from "@/components/monitoring/sweep-trigger";
 import { createConfiguredProviders } from "@beacon/ai";
 import { aiVisibilityQueries, crawlQueries, db, monitoringQueries, roiQueries } from "@beacon/db";
 import { UuidSchema } from "@beacon/shared";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -42,28 +40,7 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 	}));
 
 	return (
-		<main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-			<div className="mb-2">
-				<Link href="/monitoring" className="text-sm text-primary hover:underline">
-					&larr; Alle Projekte
-				</Link>
-			</div>
-
-			<div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-				<div>
-					<h1 className="text-3xl font-bold text-text">{project.name}</h1>
-					<a
-						href={project.websiteUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-text-muted hover:text-primary"
-					>
-						{project.websiteUrl}
-					</a>
-				</div>
-				<DeleteProjectButton id={project.id} name={project.name} />
-			</div>
-
+		<>
 			<section className="mb-8 grid gap-4 sm:grid-cols-2">
 				<div className="rounded-lg border border-border bg-surface p-4">
 					<h2 className="text-sm font-medium uppercase tracking-wide text-text-muted">
@@ -223,6 +200,6 @@ export default async function MonitoringProjectDetailPage({ params }: Props) {
 					</div>
 				)}
 			</section>
-		</main>
+		</>
 	);
 }

@@ -98,6 +98,7 @@ export {
 	ScheduleFrequencySchema,
 	MonitoringScheduleCreateSchema,
 	MonitoringScheduleUpdateSchema,
+	CompetitorCreateSchema,
 } from "./validation.js";
 export type {
 	ValidUrl,
@@ -119,6 +120,7 @@ export type {
 	ScheduleFrequency,
 	MonitoringScheduleCreateInput,
 	MonitoringScheduleUpdateInput,
+	CompetitorCreateInput,
 } from "./validation.js";
 
 // Deployment state machine (#291)
