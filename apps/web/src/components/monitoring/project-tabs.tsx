@@ -10,6 +10,7 @@ export function ProjectTabs({ projectId }: { projectId: string }) {
 		{ href: base, label: "Übersicht" },
 		{ href: `${base}/competitors`, label: "Wettbewerber" },
 		{ href: `${base}/reddit`, label: "Reddit" },
+		{ href: `${base}/alerts`, label: "Alerts" },
 	];
 
 	return (

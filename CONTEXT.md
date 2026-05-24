@@ -54,18 +54,25 @@ The scanner reports a 0–3 readiness level alongside a 0–100 score:
 No auth, no billing, no tenant model. Code for those concerns lives under
 `archive/` and can be re-enabled by forks — see `archive/README.md`.
 
-### Reserved-but-unimplemented surfaces
+### Operator console (v0.3)
 
-A few features have database schema and helpers in place but no
-production engine wired up:
+All operator surfaces live under the `(operator)` route group with a shared
+shell + sidebar (`apps/web/src/app/(operator)/`, see `docs/adr/001`). It exposes
+monitoring projects (with per-project tabs: Übersicht, Wettbewerber, Reddit,
+Alerts), instance-wide Citations, manual AI-visibility sweeps + schedules, an
+env-only Status/Health page (provider keys, queue health, DLQ, email log), and
+CRUD for CMS connections, webhooks, competitors and alerts. Config stays
+env-only (no secrets in the DB). The single-tenant `INSTANCE_USER_ID` sentinel
+profile (seeded by `db:migrate`) backs feature tables that still carry a
+NOT NULL `userId` FK (e.g. alerts).
 
-- **Multi-page crawl** — `siteCrawls` / `siteCrawlPages` tables and
-  Drizzle queries exist, and the `citation-extraction` queue reads
-  from them, but no crawler engine populates these rows. Forks that
-  want recursive crawling need to add a producer.
-- **Webhooks** — schema, HMAC helpers and event types are exported from
-  `@beacon/api-sdk`, but the BullMQ delivery worker and dispatcher have
-  been removed pending an anonymous-mode rewrite.
+Two surfaces are stored-but-not-yet-evaluated (the UI says so): monitoring
+**schedules** (the daily sweep cron doesn't yet consume `monitoring_schedules`)
+and **alerts** (no evaluator dispatches them yet). Both await a worker-side
+dispatcher.
+
+Multi-page crawl (#25) and webhook delivery (#24) — previously reserved — are
+now implemented as of v0.2.
 
 ## Repository layout
 
